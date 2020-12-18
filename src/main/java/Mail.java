@@ -29,6 +29,25 @@ public class Mail implements Serializable {
         this.ID = UUID.randomUUID().toString();
     }
 
+
+    public Mail (JSONObject obj){
+        if (obj == null)
+            throw new RuntimeException("Mail Constructor Parameter null");
+
+        this.sender = (String) obj.get("sender");
+        this.subject = (String) obj.get("subject");
+
+        //TODO figure out how to parse the date
+        this.date = (Date) obj.get("date");
+        this.priority = (Integer) obj.get("priority");
+        this.status = (String) obj.get("status");
+
+        //TODO figure out how to parse attachments
+        this.attachments = (ArrayList) obj.get("attachments");
+        this.ID = (String) obj.get("ID");
+        this.bodyText = (String) obj.get("bodyText");
+    }
+
     // TODO:
     public void addAttachment(){
 

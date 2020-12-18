@@ -17,6 +17,24 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public User (JSONObject obj){
+        if (obj == null)
+            throw new RuntimeException("User Constructor Parameter null");
+
+        this.email = (String) obj.get("email");
+        this.password = (String) obj.get("password");
+
+        JSONArray contactsJSON = (JSONArray) obj.get("contacts");
+        for (Object contact : contactsJSON){
+            this.contacts.add(new User((JSONObject) contact));
+        }
+
+        JSONArray mailsJSON = (JSONArray) obj.get("mails");
+        for (Object mail : mailsJSON){
+            this.mails.add(new Mail((JSONObject) mail));
+        }
+    }
+
     public String getEmail() {
         return email;
     }
@@ -41,13 +59,19 @@ public class User implements Serializable {
 
 
         JSONArray contactsJSON = new JSONArray();
-        for (User u : contacts)
-            contactsJSON.add(u.toJSON());
+
+        if (contacts != null) {
+            for (User u : contacts)
+                contactsJSON.add(u.toJSON());
+        }
         userJSON.put("contacts", contactsJSON);
 
         JSONArray mailsJSON = new JSONArray();
-        for (Mail m : mails)
-            contactsJSON.add(m.toJSON());
+
+        if (mails != null) {
+            for (Mail m : mails)
+                contactsJSON.add(m.toJSON());
+        }
         userJSON.put("mails", mailsJSON);
 
         return userJSON;

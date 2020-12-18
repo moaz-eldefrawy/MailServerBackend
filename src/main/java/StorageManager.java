@@ -12,20 +12,20 @@ public class StorageManager {
         User newUser = new User(email, password);
         String userFilePath = App.usersFolderPath + File.separator
                 + email;
-        FileManager.writeToFile(newUser.toJSON(), userFilePath);
+        FileManager.writeToJSONFile(newUser.toJSON(), userFilePath);
     }
     public static User retrieveUser(String email)
     {
         String userFilePath = App.usersFolderPath + File.separator
                 + email;
-        User user = (User)FileManager.getFile(userFilePath);
+        User user = new User(FileManager.getJSONObj(userFilePath));
         return user;
     }
 
     public static void storeMail(Mail mail){
         String mailPath = App.mailsFolderPath + File.separator +
                 mail.ID;
-        FileManager.writeToFile(mail.toJSON(), mailPath);
+        FileManager.writeToJSONFile(mail.toJSON(), mailPath);
     }
 
     public static Mail getMail(UUID ID){
@@ -37,7 +37,7 @@ public class StorageManager {
                 ID;
         String mailFilePath = mailFolderPath + File.separator
                 + "mail.json";
-        Mail mail = (Mail)FileManager.getFile(mailFilePath);
+        Mail mail = new Mail(FileManager.getJSONObj(mailFilePath));
         return mail;
     }
 /*
