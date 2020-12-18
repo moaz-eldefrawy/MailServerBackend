@@ -12,7 +12,7 @@ public class StorageManager {
         User newUser = new User(email, password);
         String userFilePath = App.usersFolderPath + File.separator
                 + email;
-        FileManager.writeToFile(newUser, userFilePath);
+        FileManager.writeToFile(newUser.toJSON(), userFilePath);
     }
     public static User retrieveUser(String email)
     {
@@ -25,7 +25,7 @@ public class StorageManager {
     public static void storeMail(Mail mail){
         String mailPath = App.mailsFolderPath + File.separator +
                 mail.ID;
-        FileManager.writeToFile(mail, mailPath);
+        FileManager.writeToFile(mail.toJSON(), mailPath);
     }
 
     public static Mail getMail(UUID ID){

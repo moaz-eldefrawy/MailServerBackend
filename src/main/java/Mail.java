@@ -1,3 +1,6 @@
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +14,7 @@ public class Mail implements Serializable {
     public Date date;
     public Integer priority;
     public String status;
-    public ArrayList attachements;
+    public ArrayList attachments;
     public String ID;
     public String bodyText;
 
@@ -85,5 +88,27 @@ public class Mail implements Serializable {
 
     public void setBodyText(String bodyText) {
         this.bodyText = bodyText;
+    }
+
+
+    public JSONObject toJSON(){
+        JSONObject mailJSON = new JSONObject();
+
+        mailJSON.put("sender", sender);
+        mailJSON.put("subject", subject);
+
+        // TODO I am not sure if I should put date or date.toString()
+        mailJSON.put("date", date);
+
+        mailJSON.put("priority", priority);
+        mailJSON.put("status", status);
+
+        // TODO attachments JSON?
+        mailJSON.put("attachments", attachments);
+
+        mailJSON.put("ID", ID);
+        mailJSON.put("bodyText", bodyText);
+
+        return mailJSON;
     }
 }
