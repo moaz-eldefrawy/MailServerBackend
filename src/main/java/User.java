@@ -15,6 +15,8 @@ public class User implements Serializable {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.contacts = new ArrayList<>();
+        this.mails = new ArrayList<>();
     }
 
     public User (JSONObject obj){
@@ -25,11 +27,13 @@ public class User implements Serializable {
         this.password = (String) obj.get("password");
 
         JSONArray contactsJSON = (JSONArray) obj.get("contacts");
+        this.contacts = new ArrayList<>();
         for (Object contact : contactsJSON){
             this.contacts.add(new User((JSONObject) contact));
         }
 
         JSONArray mailsJSON = (JSONArray) obj.get("mails");
+        this.mails = new ArrayList<>();
         for (Object mail : mailsJSON){
             this.mails.add(new Mail((JSONObject) mail));
         }

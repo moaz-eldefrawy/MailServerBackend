@@ -26,7 +26,9 @@ public class Mail implements Serializable {
         this.date= date;
         this.priority=priority;
         this.status="unread";
+        this.attachments = new ArrayList();
         this.ID = UUID.randomUUID().toString();
+        this.bodyText = "";
     }
 
 
@@ -38,8 +40,8 @@ public class Mail implements Serializable {
         this.subject = (String) obj.get("subject");
 
         //TODO figure out how to parse the date
-        this.date = (Date) obj.get("date");
-        this.priority = (Integer) obj.get("priority");
+        this.date = new Date((long)obj.get("date"));
+        this.priority = (int)(long)obj.get("priority");
         this.status = (String) obj.get("status");
 
         //TODO figure out how to parse attachments
@@ -117,7 +119,7 @@ public class Mail implements Serializable {
         mailJSON.put("subject", subject);
 
         // TODO I am not sure if I should put date or date.toString()
-        mailJSON.put("date", date);
+        mailJSON.put("date", date.getTime());
 
         mailJSON.put("priority", priority);
         mailJSON.put("status", status);

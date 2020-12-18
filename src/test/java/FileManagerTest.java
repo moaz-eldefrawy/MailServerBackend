@@ -46,11 +46,11 @@ public class FileManagerTest {
 
 
 		// JSON tests
-		FileManager.writeToJSONFile(jsonObj1, dummyFolderPath + File.separator + "7alabo2a.json");
-		FileManager.writeToJSONFile(jsonObj2, dummyFolderPath + File.separator + "Team7.json");
+		FileManager.writeToJSONFile(jsonObj1, dummyFolderPath + File.separator + "7alabo2a");
+		FileManager.writeToJSONFile(jsonObj2, dummyFolderPath + File.separator + "Team7");
 
-		JSONObject read1 = FileManager.getJSONObj(dummyFolderPath + File.separator + "7alabo2a.json");
-		JSONObject read2 = FileManager.getJSONObj(dummyFolderPath + File.separator + "Team7.json");
+		JSONObject read1 = FileManager.getJSONObj(dummyFolderPath + File.separator + "7alabo2a");
+		JSONObject read2 = FileManager.getJSONObj(dummyFolderPath + File.separator + "Team7");
 
 		assertEquals(read1, jsonObj1);
 		assertEquals(read2, jsonObj2);

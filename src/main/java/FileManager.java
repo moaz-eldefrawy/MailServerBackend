@@ -83,7 +83,7 @@ public class FileManager {
 
 	public static void writeToJSONFile(JSONObject obj, String filePath) {
 		try {
-			FileWriter file = new FileWriter(filePath);
+			FileWriter file = new FileWriter(filePath + ".json");
 			file.write(obj.toJSONString());
 			file.flush();
 			file.close();
@@ -99,7 +99,7 @@ public class FileManager {
 
 		try
 		{
-			FileReader reader = new FileReader(filePath);
+			FileReader reader = new FileReader(filePath + ".json");
 
 			//Read JSON file
 			Object obj = jsonParser.parse(reader);

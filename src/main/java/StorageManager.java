@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 public class StorageManager {
@@ -14,6 +16,16 @@ public class StorageManager {
                 + email;
         FileManager.writeToJSONFile(newUser.toJSON(), userFilePath);
     }
+
+    public static void storeUser(User u)
+    {
+        String userFilePath = App.usersFolderPath + File.separator
+                + u.email;
+        FileManager.writeToJSONFile(u.toJSON(), userFilePath);
+    }
+
+
+
     public static User retrieveUser(String email)
     {
         String userFilePath = App.usersFolderPath + File.separator
@@ -25,7 +37,11 @@ public class StorageManager {
     public static void storeMail(Mail mail){
         String mailPath = App.mailsFolderPath + File.separator +
                 mail.ID;
-        FileManager.writeToJSONFile(mail.toJSON(), mailPath);
+
+        File mailFolder = new File(mailPath);
+        mailFolder.mkdirs();
+
+        FileManager.writeToJSONFile(mail.toJSON(), mailPath + File.separator + "mail");
     }
 
     public static Mail getMail(UUID ID){
@@ -36,10 +52,11 @@ public class StorageManager {
         String mailFolderPath = App.mailsFolderPath + File.separator +
                 ID;
         String mailFilePath = mailFolderPath + File.separator
-                + "mail.json";
+                + "mail";
         Mail mail = new Mail(FileManager.getJSONObj(mailFilePath));
         return mail;
     }
+
 /*
     a bunch of email functions
     public void store(String userPath, String folder) {
