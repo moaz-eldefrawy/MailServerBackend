@@ -1,4 +1,5 @@
-import org.json.simple.JSONArray;
+package Services;
+
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;
@@ -19,7 +20,7 @@ public class Mail implements Serializable {
     public String bodyText;
 
 
-    Mail(String sender,
+    public Mail(String sender,
          String subject, Date date, Integer priority){
         this.sender=sender;
         this.subject=subject;

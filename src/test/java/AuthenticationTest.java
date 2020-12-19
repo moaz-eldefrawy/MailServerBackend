@@ -1,3 +1,7 @@
+import Services.App;
+import Services.Authentication;
+import Services.FileManager;
+import Services.User;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

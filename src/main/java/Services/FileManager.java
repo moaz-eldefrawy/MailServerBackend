@@ -1,11 +1,11 @@
-import org.json.simple.JSONArray;
+package Services;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.ParseException;
 
 public class FileManager {
 	public static void writeToFile(Object obj, String filePath) {
