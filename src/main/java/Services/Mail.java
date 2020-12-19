@@ -1,5 +1,6 @@
 package Services;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class Mail implements Serializable {
     public Date date;
     public Integer priority;
     public String status;
-    public ArrayList attachments;
+    public ArrayList<String> attachments;
     public String ID;
     public String bodyText;
 
@@ -27,7 +28,7 @@ public class Mail implements Serializable {
         this.date= date;
         this.priority=priority;
         this.status="unread";
-        this.attachments = new ArrayList();
+        this.attachments = new ArrayList<>();
         this.ID = UUID.randomUUID().toString();
         this.bodyText = "";
     }
@@ -45,8 +46,12 @@ public class Mail implements Serializable {
         this.priority = (int)(long)obj.get("priority");
         this.status = (String) obj.get("status");
 
-        //TODO figure out how to parse attachments
-        this.attachments = (ArrayList) obj.get("attachments");
+        //TODO parse attachments
+        JSONArray attachmentsJSON = (JSONArray) obj.get("attachments");
+        this.attachments = new ArrayList<>();
+        this.attachments.addAll(attachmentsJSON);
+
+
         this.ID = (String) obj.get("ID");
         this.bodyText = (String) obj.get("bodyText");
     }
@@ -125,8 +130,10 @@ public class Mail implements Serializable {
         mailJSON.put("priority", priority);
         mailJSON.put("status", status);
 
-        // TODO attachments JSON?
-        mailJSON.put("attachments", attachments);
+        // TODO attachments
+        JSONArray attachmentsJSON = new JSONArray();
+        attachmentsJSON.addAll(attachments);
+        mailJSON.put("attachments", attachmentsJSON);
 
         mailJSON.put("ID", ID);
         mailJSON.put("bodyText", bodyText);

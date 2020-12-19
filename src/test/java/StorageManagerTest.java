@@ -28,9 +28,17 @@ public class StorageManagerTest {
         assertTrue(userEquals(u, StorageManager.retrieveUser(email)));
 
         //Mail write read
-        Mail mail =  new Mail("sender@sender.com", "Subject ysta", new Date(System.currentTimeMillis()), 1);
+        Mail mail =  new Mail("sender@mail1.com", "Subject 1 ysta", new Date(System.currentTimeMillis()), 1);
         StorageManager.storeMail(mail);
         assertTrue(mailEquals(mail, StorageManager.getMail(mail.getID())));
+
+        mail =  new Mail("sender@mail12.com", "Subject 2 ysta", new Date(System.currentTimeMillis()), 4);
+        mail.attachments.add("attachment1");
+        mail.attachments.add("attachment2");
+        mail.attachments.add("attachment3");
+        StorageManager.storeMail(mail);
+        assertTrue(mailEquals(mail, StorageManager.getMail(mail.getID())));
+
 
         //
     }
