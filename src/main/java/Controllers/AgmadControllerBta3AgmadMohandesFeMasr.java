@@ -1,13 +1,20 @@
 package Controllers;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AgmadControllerBta3AgmadMohandesFeMasr {
-    public String index() {
-        return "Moaz eldefrawy";
+    @PostMapping(
+            path = "/",
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public String handlePostRequest(@RequestBody MultiValueMap<String,String> paramMap) {
+        return paramMap.get("name") + " " + paramMap.get("shape");
+    }
+
+    @GetMapping("/")
+    public String haha(){
+        return "hello world";
     }
 }
