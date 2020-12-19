@@ -43,7 +43,7 @@ public class Authentication {
 
 	public Boolean userExists(String email) {
 		String userFilePath = App.usersFolderPath + File.separator +
-				email;
+				email + ".json";
 		File userFolder = new File(userFilePath);
 		return userFolder.exists();
 	}
