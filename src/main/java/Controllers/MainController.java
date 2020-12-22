@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class AuthenticationController {
+public class MainController {
 
 
     @PostMapping(

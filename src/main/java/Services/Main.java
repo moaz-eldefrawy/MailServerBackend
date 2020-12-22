@@ -1,6 +1,6 @@
 package Services;
 
-import Controllers.AuthenticationController;
+import Controllers.MainController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class Main {
         for(int i=0; i<folders.get("inbox").size(); i++){
             System.out.println( folders.get("inbox").get(i) );
         }
-        AuthenticationController a = new AuthenticationController();
+        MainController a = new MainController();
     }
 
     public static void sortTesting(){
