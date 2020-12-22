@@ -3,12 +3,37 @@ package Services;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         //System.out.println(user.password);
-        Main.sortTesting();
+        HashMap<String, ArrayList> folders = new HashMap<String, ArrayList>();
+        folders.put("inbox", new ArrayList());
+        UUID ID = UUID.randomUUID();
+        UUID ID2 = UUID.fromString( ID.toString() );
+        System.out.println( ID == ID2 );
+        folders.get("inbox").add(ID);
+        folders.get("inbox").add("fine");
+        folders.get("inbox").remove("fine");
+        for(int i=0; i<folders.get("inbox").size(); i++){
+            System.out.println( folders.get("inbox").get(i) );
+        }
+
+        User user = new User("SomeShit", "ahmed");
+        user.folders.get("inbox").add( UUID.randomUUID().toString());
+        user.folders.get("inbox").add( UUID.randomUUID().toString() );
+        user.folders.get("inbox").add( UUID.randomUUID().toString() );
+        StorageManager.storeUser(user);
+
+        User user2 = StorageManager.retrieveUser("SomeShit");
+        System.out.println(user2.email);
+        System.out.println(user2.folders.size());
+        System.out.println(user2.folders.get("inbox").get(0));
+        System.out.println(user2.folders.get("inbox").get(1));
+        System.out.println(user2.folders.get("inbox").get(2));
     }
 
     public static void sortTesting(){

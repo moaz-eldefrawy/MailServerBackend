@@ -1,10 +1,11 @@
 package Services;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.*;
 
 public class User implements Serializable {
 
@@ -12,13 +13,19 @@ public class User implements Serializable {
     public String email;
     public String password;
     public ArrayList<User> contacts;
+    public HashMap<String, ArrayList<String> > folders;
     public ArrayList<Mail> mails;
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
         this.contacts = new ArrayList<>();
-        this.mails = new ArrayList<>();
+        this.folders = new HashMap<String, ArrayList<String>>();
+        this.mails = new ArrayList<Mail>();
+        this.folders.put("inbox", new ArrayList());
+        this.folders.put("trash", new ArrayList());
+        this.folders.put("drafts", new ArrayList());
+        this.folders.put("sent", new ArrayList());
     }
 
     public User (JSONObject obj){
@@ -38,6 +45,12 @@ public class User implements Serializable {
         this.mails = new ArrayList<>();
         for (Object mail : mailsJSON){
             this.mails.add(new Mail((JSONObject) mail));
+        }
+
+        JSONObject jo = (JSONObject) obj.get("folders");
+        this.folders = new HashMap<String, ArrayList<String> >();
+        for (Object key: jo.keySet()) {
+            this.folders.put(key.toString() , (ArrayList<String>) jo.get(key));
         }
     }
 
@@ -76,9 +89,19 @@ public class User implements Serializable {
 
         if (mails != null) {
             for (Mail m : mails)
-                contactsJSON.add(m.toJSON());
+                mailsJSON.add(m.toJSON());
         }
         userJSON.put("mails", mailsJSON);
+
+
+        JSONObject folderJson = new JSONObject();
+        for (Map.Entry<String, ArrayList<String>> entry : this.folders.entrySet()) {
+            String folderName =  entry.getKey();
+            ArrayList<String> values = entry.getValue();
+            folderJson.put(folderName, values);
+        }
+
+        userJSON.put("folders",folderJson);
 
         return userJSON;
     }
@@ -113,6 +136,24 @@ public class User implements Serializable {
                 if (!aMail.equals(aMail))
                     return false;
             }
+        }
+
+        //TODO: check this.folders
+        try {
+            for (Map.Entry<String, ArrayList<String>> entry : this.folders.entrySet()) {
+                String folderName = entry.getKey();
+                ArrayList<String> myIDs = entry.getValue();
+                ArrayList<String> hisIDs = b.folders.get(folderName);
+                Collections.sort(myIDs);
+                Collections.sort(hisIDs);
+                if(myIDs.size() != hisIDs.size()) return false;
+                for(int i=0; i<myIDs.size(); i++){
+                    if(!myIDs.get(i).equals(hisIDs.get(i)))
+                        return false;
+                }
+            }
+        } catch (Exception e){
+            return false;
         }
 
         return true;

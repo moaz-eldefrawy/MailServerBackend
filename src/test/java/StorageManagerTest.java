@@ -2,6 +2,7 @@ import Services.*;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -19,8 +20,8 @@ public class StorageManagerTest {
     File dummyFile = new File(dummyFilepath);
 
     @Test
-    public void test(){
-
+    public void test() throws IOException {
+        new App();
         //User write read
         String email = "shaka@adel.com", password = "password";
         User u = new User(email, password);
@@ -41,6 +42,11 @@ public class StorageManagerTest {
 
 
         //
+    }
+
+    @Test
+    public void folderOperations() throws IOException {
+
     }
 
     boolean userEquals(User a, User b){
