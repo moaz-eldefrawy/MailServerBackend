@@ -1,14 +1,29 @@
 package Services;
 
+import Controllers.MainController;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         //System.out.println(user.password);
-        Main.sortTesting();
+        HashMap<String, ArrayList> folders = new HashMap<String, ArrayList>();
+        folders.put("inbox", new ArrayList());
+        UUID ID = UUID.randomUUID();
+        UUID ID2 = UUID.fromString( ID.toString() );
+        System.out.println( ID == ID2 );
+        folders.get("inbox").add(ID);
+        folders.get("inbox").add("fine");
+        folders.get("inbox").remove("fine");
+        for(int i=0; i<folders.get("inbox").size(); i++){
+            System.out.println( folders.get("inbox").get(i) );
+        }
+        MainController a = new MainController();
     }
 
     public static void sortTesting(){

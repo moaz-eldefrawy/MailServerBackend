@@ -1,5 +1,8 @@
 package Services;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -8,21 +11,31 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+
+@JsonIgnoreProperties(ignoreUnknown =  true)
 public class Mail implements Serializable {
 
     public static final long serialVersionUID = 3347324734166375499L;
-    public String sender;
-    public String subject;
-    public Date date;
-    public Integer priority;
+    @JsonProperty("sender") public String sender;
+    @JsonProperty("subject") public String subject;
+    public Date date ;
+    @JsonProperty("priority") public Integer priority;
     public String status;
     public ArrayList<String> attachments;
     public String ID;
-    public String bodyText;
+    @JsonProperty("body") public String bodyText;
 
-
+    //TODO: JsonProperty for date
+    public Mail(){
+        ID = UUID.randomUUID().toString();
+        date =  new Date(System.currentTimeMillis());
+        status = "unread";
+        bodyText = "";
+        attachments =new ArrayList<>();
+    }
     public Mail(String sender,
-         String subject, Date date, Integer priority){
+         String subject, Date date,
+                Integer priority){
         this.sender=sender;
         this.subject=subject;
         this.date= date;
@@ -31,6 +44,27 @@ public class Mail implements Serializable {
         this.attachments = new ArrayList<>();
         this.ID = UUID.randomUUID().toString();
         this.bodyText = "";
+    }
+
+
+    public boolean equals(Mail b){
+        if (!this.sender.equals(b.sender))
+            return false;
+        if (!this.subject.equals(b.subject))
+            return false;
+        if (!this.date.equals(b.date))
+            return false;
+        if (!this.priority.equals(b.priority))
+            return false;
+        if (!this.status.equals(b.status))
+            return false;
+        if (!this.attachments.equals(b.attachments))
+            return false;
+        if (!this.ID.equals(b.ID))
+            return false;
+        if (!this.bodyText.equals(b.bodyText))
+            return false;
+        return true;
     }
 
 
@@ -125,6 +159,7 @@ public class Mail implements Serializable {
         mailJSON.put("subject", subject);
 
         // TODO I am not sure if I should put date or date.toString()
+        System.out.println("DATE--> " + date.getTime());
         mailJSON.put("date", date.getTime());
 
         mailJSON.put("priority", priority);

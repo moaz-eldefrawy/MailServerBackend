@@ -31,6 +31,10 @@ public class Authentication {
 		return true;
 	}
 
+	/**
+
+		return null on failure and user object on success
+	 */
 	public User signIn(String email, String password) {
 		if (!userExists(email) || !isValidEmailFormat(email))
 			return null;
@@ -46,6 +50,7 @@ public class Authentication {
 	public Boolean userExists(String email) {
 		String userFilePath = App.usersFolderPath + File.separator +
 				email + ".json";
+
 		File userFolder = new File(userFilePath);
 		return userFolder.exists();
 	}

@@ -16,7 +16,7 @@ class AuthenticationTest {
         App app =  new App();
         Authentication auth = Authentication.getInstance();
         FileManager.deleteDir(new File(App.usersFolderPath +
-                File.separator + "random@gmail.com"));
+                File.separator + "random@gmail.com.json"));
         // TODO: add json to (gmail.com)
         boolean ok = auth.signUp("random@gmail.com",
                 "ok123");

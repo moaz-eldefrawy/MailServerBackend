@@ -1,8 +1,14 @@
 package Services;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.UUID;
 
+
+/*
+
+    includes database queries
+ */
 public class StorageManager {
 
 
@@ -14,14 +20,11 @@ public class StorageManager {
         FileManager.writeToJSONFile(newUser.toJSON(), userFilePath);
     }
 
-    public static void storeUser(User u)
-    {
+    public static void storeUser(User u) {
         String userFilePath = App.usersFolderPath + File.separator
                 + u.email;
         FileManager.writeToJSONFile(u.toJSON(), userFilePath);
     }
-
-
 
     public static User retrieveUser(String email)
     {
@@ -54,47 +57,55 @@ public class StorageManager {
         return mail;
     }
 
-/*
-    a bunch of email functions
-    public void store(String userPath, String folder) {
-        setMailFolderPath(userPath, folder);
-        addToIndexFile();
-        try{
-            createMailFolder();
-        } catch(Exception e) {
-            e.printStackTrace();
+    public static boolean addMailToFolder(String mailID, String folderName, String userEmail){
+        if(!mailExists(mailID))
+            return false;
+        User user = retrieveUser(userEmail);
+        ArrayList folder = user.folders.get(folderName);
+        if(folder == null)
+            return false;
+        folder.add(mailID);
+        StorageManager.storeUser(user);
+        return  true;
+    }
+
+    public static boolean removeMailFromFolder(String mailID, String folderName, String email){
+        if(!mailExists(mailID))
+            return false;
+        User user = retrieveUser(email);
+        if( user.folders.get(folderName) == null)
+            return false;
+        user.folders.get(folderName).remove(mailID);
+        StorageManager.storeUser(user);
+        return true;
+
+    }
+
+    // NOTE: will remove even if it one the destination folder doesn't exist
+    public static boolean MoveMailToFolder(String ID, String folderOrigin, String folderDest, String email){
+        if(!mailExists(ID))
+            return false;
+        return removeMailFromFolder(ID, folderOrigin, email) &&
+         addMailToFolder(ID, folderDest, email);
+    }
+
+    public static ArrayList<Mail> getUserMails(String email, String folderName){
+        return getUserMails( StorageManager.retrieveUser(email), folderName );
+    }
+
+    public static ArrayList<Mail> getUserMails(User user, String folderName) {
+        ArrayList folder = user.folders.get(folderName);
+        ArrayList<Mail> mails = new ArrayList<Mail>();
+        for (int i = 0; i < folder.size(); i++) {
+            mails.add(StorageManager.getMail( (String)(folder.get(i))));
         }
-
+        return mails;
     }
 
-    public void addToIndexFile()
-    {
-        Index.writeToIndexFile(this.basicInfo);
+
+    public static boolean mailExists(String mailId){
+        File file = new File(App.mailsFolderPath + File.separator + mailId);
+        return file.exists();
     }
-    public void setMailFolderPath(String userPath,String folder)
-    {
-        basicInfo.mailFolderPath=userPath+ File.separator+folder+File.separator+this.basicInfo.ID;
-        Index.IndexFilePath=userPath+File.separator+folder+File.separator+"index.txt";
-    }
-
-    public void createMailFolder() throws IOException
-    {
-        File mailFolder=new File(this.basicInfo.mailFolderPath);
-        mailFolder.mkdirs();
-        File textFile =new File(mailFolder.getAbsolutePath()+File.separator+"text.txt");
-        textFile.createNewFile();
-        FileManager.writeToFile(this.bodyText,textFile.getAbsolutePath());
-
-
-        // store attachments
-        if(basicInfo.attachements == null)
-            return;
-        for(int i=0; i<basicInfo.attachements.size(); i++) {
-            String attachment = (String) basicInfo.attachements.get(i);
-            attachment = Attachment.store(attachment);
-            basicInfo.attachements.set(i, attachment);
-        }
-
-    }*/
 
 }
