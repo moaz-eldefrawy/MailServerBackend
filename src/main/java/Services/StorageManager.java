@@ -54,47 +54,4 @@ public class StorageManager {
         return mail;
     }
 
-/*
-    a bunch of email functions
-    public void store(String userPath, String folder) {
-        setMailFolderPath(userPath, folder);
-        addToIndexFile();
-        try{
-            createMailFolder();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void addToIndexFile()
-    {
-        Index.writeToIndexFile(this.basicInfo);
-    }
-    public void setMailFolderPath(String userPath,String folder)
-    {
-        basicInfo.mailFolderPath=userPath+ File.separator+folder+File.separator+this.basicInfo.ID;
-        Index.IndexFilePath=userPath+File.separator+folder+File.separator+"index.txt";
-    }
-
-    public void createMailFolder() throws IOException
-    {
-        File mailFolder=new File(this.basicInfo.mailFolderPath);
-        mailFolder.mkdirs();
-        File textFile =new File(mailFolder.getAbsolutePath()+File.separator+"text.txt");
-        textFile.createNewFile();
-        FileManager.writeToFile(this.bodyText,textFile.getAbsolutePath());
-
-
-        // store attachments
-        if(basicInfo.attachements == null)
-            return;
-        for(int i=0; i<basicInfo.attachements.size(); i++) {
-            String attachment = (String) basicInfo.attachements.get(i);
-            attachment = Attachment.store(attachment);
-            basicInfo.attachements.set(i, attachment);
-        }
-
-    }*/
-
 }

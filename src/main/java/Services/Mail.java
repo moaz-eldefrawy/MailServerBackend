@@ -33,6 +33,26 @@ public class Mail implements Serializable {
         this.bodyText = "";
     }
 
+    public boolean equals(Mail b){
+        if (!this.sender.equals(b.sender))
+            return false;
+        if (!this.subject.equals(b.subject))
+            return false;
+        if (!this.date.equals(b.date))
+            return false;
+        if (!this.priority.equals(b.priority))
+            return false;
+        if (!this.status.equals(b.status))
+            return false;
+        if (!this.attachments.equals(b.attachments))
+            return false;
+        if (!this.ID.equals(b.ID))
+            return false;
+        if (!this.bodyText.equals(b.bodyText))
+            return false;
+        return true;
+    }
+
 
     public Mail (JSONObject obj){
         if (obj == null)

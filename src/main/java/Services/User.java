@@ -82,4 +82,39 @@ public class User implements Serializable {
 
         return userJSON;
     }
+
+
+    public boolean equals(User b){
+        // Email address
+        if (!this.email.equals(b.email))
+            return false;
+
+        // Password
+        if (!this.password.equals(b.password))
+            return false;
+
+        // Contacts
+        if (this.contacts.size() != b.contacts.size())
+            return  false;
+
+        for (User aContact : this.contacts){
+            for (User bContact : b.contacts){
+                if (!aContact.equals(bContact))
+                    return false;
+            }
+        }
+
+        // Mails
+        if (this.mails.size() != b.mails.size())
+            return  false;
+
+        for (Mail aMail : this.mails){
+            for (Mail bMail : b.mails){
+                if (!aMail.equals(aMail))
+                    return false;
+            }
+        }
+
+        return true;
+    }
 }
