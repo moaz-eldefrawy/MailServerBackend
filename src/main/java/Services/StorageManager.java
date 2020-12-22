@@ -4,6 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
+
+/*
+
+    includes database queries
+ */
 public class StorageManager {
 
 
@@ -52,38 +57,55 @@ public class StorageManager {
         return mail;
     }
 
-    public static void addMailToFolder(String ID, String folderName, User user){
-        ArrayList folder = user.folders.get(folderName);
-        folder.add(ID);
-        StorageManager.storeUser(user);
-    }
-    public static void addMailToFolder(String mailID, String folder, String userEmail){
+    public static boolean addMailToFolder(String mailID, String folderName, String userEmail){
+        if(!mailExists(mailID))
+            return false;
         User user = retrieveUser(userEmail);
-        addMailToFolder(mailID,folder, user);
+        ArrayList folder = user.folders.get(folderName);
+        if(folder == null)
+            return false;
+        folder.add(mailID);
+        StorageManager.storeUser(user);
+        return  true;
     }
 
-    public static void removeMailFromFolder(String mailID, String folderName, User user){
-        ArrayList folder = user.folders.get(folderName);
-        folder.remove(mailID);
-        StorageManager.storeUser(user);
-    }
-    public static void removeMailFromFolder(String ID, String folder, String email){
+    public static boolean removeMailFromFolder(String mailID, String folderName, String email){
+        if(!mailExists(mailID))
+            return false;
         User user = retrieveUser(email);
-        addMailToFolder(ID,folder, user);
+        if( user.folders.get(folderName) == null)
+            return false;
+        user.folders.get(folderName).remove(mailID);
+        StorageManager.storeUser(user);
+        return true;
+
+    }
+
+    // NOTE: will remove even if it one the destination folder doesn't exist
+    public static boolean MoveMailToFolder(String ID, String folderOrigin, String folderDest, String email){
+        if(!mailExists(ID))
+            return false;
+        return removeMailFromFolder(ID, folderOrigin, email) &&
+         addMailToFolder(ID, folderDest, email);
     }
 
     public static ArrayList<Mail> getUserMails(String email, String folderName){
         return getUserMails( StorageManager.retrieveUser(email), folderName );
     }
 
-    public static ArrayList<Mail> getUserMails(User user, String folderName){
+    public static ArrayList<Mail> getUserMails(User user, String folderName) {
         ArrayList folder = user.folders.get(folderName);
-        ArrayList <Mail> mails = new ArrayList<Mail>();
-        for(int i=0; i<folder.size(); i++){
-            mails.add( StorageManager.getMail( (UUID)folder.get(i) ) );
+        ArrayList<Mail> mails = new ArrayList<Mail>();
+        for (int i = 0; i < folder.size(); i++) {
+            mails.add(StorageManager.getMail( (String)(folder.get(i))));
         }
         return mails;
     }
 
+
+    public static boolean mailExists(String mailId){
+        File file = new File(App.mailsFolderPath + File.separator + mailId);
+        return file.exists();
+    }
 
 }

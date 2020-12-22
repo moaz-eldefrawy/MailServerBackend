@@ -1,7 +1,8 @@
-import Services.StorageManager;
-import Services.User;
+import Services.*;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
@@ -11,9 +12,13 @@ class UserTest {
 
 
     @Test
-    void toJSONandEquals_Test() {
-        User user1 = new User("some","some");
-        User user2 = new User("some","some");
+    void toJSONandEquals_Test() throws IOException {
+        new App();
+        Authentication auth = Authentication.getInstance();
+        FileManager.deleteDir(new File(App.usersFolderPath + File.separator + "someZc@ok.com.json"));
+        assertTrue(auth.signUp("someZc@ok.com","some"));
+        User user1 = new User("someZc@ok.com","some");
+        User user2 = new User("someZc@ok.com","some");
         user1.folders.get("inbox").add( "1" );
         user2.folders.get("inbox").add( "1" );
         user1.folders.get("inbox").add( "123123" );
@@ -22,7 +27,7 @@ class UserTest {
         assertTrue(user1.equals(user2));
 
         StorageManager.storeUser(user1);
-        User user3 = StorageManager.retrieveUser("some");
+        User user3 = StorageManager.retrieveUser("someZc@ok.com");
         assertTrue(user3.equals(user1));
     }
 }

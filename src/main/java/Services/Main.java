@@ -1,5 +1,7 @@
 package Services;
 
+import Controllers.AuthenticationController;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,19 +23,7 @@ public class Main {
         for(int i=0; i<folders.get("inbox").size(); i++){
             System.out.println( folders.get("inbox").get(i) );
         }
-
-        User user = new User("SomeShit", "ahmed");
-        user.folders.get("inbox").add( UUID.randomUUID().toString());
-        user.folders.get("inbox").add( UUID.randomUUID().toString() );
-        user.folders.get("inbox").add( UUID.randomUUID().toString() );
-        StorageManager.storeUser(user);
-
-        User user2 = StorageManager.retrieveUser("SomeShit");
-        System.out.println(user2.email);
-        System.out.println(user2.folders.size());
-        System.out.println(user2.folders.get("inbox").get(0));
-        System.out.println(user2.folders.get("inbox").get(1));
-        System.out.println(user2.folders.get("inbox").get(2));
+        AuthenticationController a = new AuthenticationController();
     }
 
     public static void sortTesting(){

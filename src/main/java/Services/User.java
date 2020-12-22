@@ -70,6 +70,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
+
     public JSONObject toJSON(){
         JSONObject userJSON = new JSONObject();
 

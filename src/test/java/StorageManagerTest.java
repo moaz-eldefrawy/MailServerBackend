@@ -1,4 +1,5 @@
 import Services.*;
+import com.sun.source.tree.AssertTree;
 import org.junit.Test;
 
 import java.io.File;
@@ -6,6 +7,8 @@ import java.io.IOException;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StorageManagerTest {
 
@@ -46,7 +49,29 @@ public class StorageManagerTest {
 
     @Test
     public void folderOperations() throws IOException {
+        Authentication.getInstance().signUp("some2@gmail.com","some2");
+        User user1 = new User("some2@gmail.com","some");
+        User user2 = new User("some2@gmail.com","some");
+        Mail mail1 =  new Mail("sender@mail12.com", "Subject 2 ysta", new Date(System.currentTimeMillis()), 4);
+        mail1.attachments.add("attachment1");
+        Mail mail2 =  new Mail("sender@mail12.com", "Subject 3 ysta", new Date(System.currentTimeMillis()), 4);
+        mail1.attachments.add("attachment1");
+        StorageManager.storeMail(mail1);
+        StorageManager.storeMail(mail2);
 
+        user2.folders.get("inbox").add( mail1.ID );
+        user2.folders.get("sent").add( mail2.ID );
+        StorageManager.storeUser(user1);
+        StorageManager.addMailToFolder(mail1.ID,"inbox","some2@gmail.com");
+        StorageManager.addMailToFolder(mail2.ID,"sent","some2@gmail.com");
+        user1 = StorageManager.retrieveUser("some2@gmail.com");
+        assertTrue(user1.equals(user2));
+
+        user2.folders.get("inbox").remove(mail1.ID);
+        user1 = StorageManager.retrieveUser("some2@gmail.com");
+        StorageManager.removeMailFromFolder(mail1.ID,"inbox","some2@gmail.com");
+        user1 = StorageManager.retrieveUser("some2@gmail.com");
+        assertTrue(user2.equals(StorageManager.retrieveUser("some2@gmail.com")));
     }
 
     boolean userEquals(User a, User b){
