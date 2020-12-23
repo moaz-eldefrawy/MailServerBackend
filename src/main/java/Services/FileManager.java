@@ -1,11 +1,12 @@
 package Services;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
+import org.json.JSONObject;
 
 public class FileManager {
 	public static void writeToFile(Object obj, String filePath) {
@@ -84,7 +85,7 @@ public class FileManager {
 	public static void writeToJSONFile(JSONObject obj, String filePath) {
 		try {
 			FileWriter file = new FileWriter(filePath + ".json");
-			file.write(obj.toJSONString());
+			file.write(obj.toString());
 			file.flush();
 			file.close();
 		} catch (Exception e) {
@@ -95,16 +96,13 @@ public class FileManager {
 
 	public  static JSONObject getJSONObj(String filePath){
 		//JSON parser object to parse read file
-		JSONParser jsonParser = new JSONParser();
+		//JSONParser jsonParser = new JSONParser();
 
 		try
 		{
 			FileReader reader = new FileReader(filePath + ".json");
-
-			//Read JSON file
-			Object obj = jsonParser.parse(reader);
-			JSONObject jsonObject = (JSONObject) obj;
-
+			String content = new String(Files.readAllBytes(Paths.get(filePath+".json")), StandardCharsets.UTF_8);
+			JSONObject jsonObject = new JSONObject(content);
 			reader.close();
 			return jsonObject;
 
@@ -112,7 +110,7 @@ public class FileManager {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (org.json.simple.parser.ParseException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

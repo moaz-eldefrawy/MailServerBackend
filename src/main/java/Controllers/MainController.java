@@ -4,40 +4,61 @@ import Services.Authentication;
 import Services.Mail;
 import Services.StorageManager;
 import Services.User;
+
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+
 import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class MainController {
 
+    private Authentication auth = Authentication.getInstance();
+    @PostMapping(path = "/signup")
+    public String signUp(@RequestBody String body) {
+        /*
+        JSONObject json = new JSONObject();
+        //User user = new User(email, password);
+        Boolean userCreated = auth.signUp(body, password);
+        if(userCreated) {
+            return "kolo mia mia";
+        }*/
+        
+        JSONObject json = new JSONObject(body);
+        String email = (String)json.get("email");
+        String password = (String)json.get("password");
 
-    @PostMapping(
-            path = "/signup", consumes = "application/x-www-form-urlencoded")
-    public boolean signUp(String email, String password) {
-        User user = new User(email, password);
-        Authentication auth = Authentication.getInstance();
-        return auth.signUp(email, password);
+        JSONObject resp = new JSONObject();
+        resp.put("token", "gdklfgjdflgjdflkgldfh");
+        resp.put("user", "ahmed bahgat");
+        auth.signUp(email, password);
+        return resp.toString();
     }
 
-    @PostMapping(
-            path = "/signin", consumes = "application/x-www-form-urlencoded")
-    public User signIn(String email, String password, HttpServletResponse response) {
-        Authentication auth = Authentication.getInstance();
+    @PostMapping(path = "/signin")
+    public String signIn(@RequestBody String body, HttpServletResponse response) {
+        JSONObject json = new JSONObject(body);
+        String email = (String)json.get("email");
+        String password = (String)json.get("password");
+        System.out.println("email: "+email);
+        System.out.println("password: "+password);
         User user = auth.signIn(email, password);
-        if (user == null) {
+
+        if (user == null || !user.password.equals(password)) {
             response.setStatus(401);
         } else {
             String authString = "email=" + email + ";" + "Max-Age=99999999999999";
-            String temp = "Bearer " + "email=" + email;
             response.addHeader("Set-Cookie", authString);
         }
-        return user;
+        return "{\"user\": \""+email+"\"}";
     }
 
     //TODO: remove default value

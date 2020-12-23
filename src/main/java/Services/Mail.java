@@ -3,8 +3,9 @@ package Services;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class Mail implements Serializable {
         //TODO parse attachments
         JSONArray attachmentsJSON = (JSONArray) obj.get("attachments");
         this.attachments = new ArrayList<>();
-        this.attachments.addAll(attachmentsJSON);
+        //this.attachments.addAll(attachmentsJSON);
 
 
         this.ID = (String) obj.get("ID");
@@ -167,7 +168,7 @@ public class Mail implements Serializable {
 
         // TODO attachments
         JSONArray attachmentsJSON = new JSONArray();
-        attachmentsJSON.addAll(attachments);
+        attachmentsJSON.put(attachments);
         mailJSON.put("attachments", attachmentsJSON);
 
         mailJSON.put("ID", ID);

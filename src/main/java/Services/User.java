@@ -1,11 +1,12 @@
 package Services;
 
 import ch.qos.logback.core.encoder.EchoEncoder;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 import java.util.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class User implements Serializable {
 
@@ -40,18 +41,19 @@ public class User implements Serializable {
         for (Object contact : contactsJSON){
             this.contacts.add(new User((JSONObject) contact));
         }
-
         JSONArray mailsJSON = (JSONArray) obj.get("mails");
         this.mails = new ArrayList<>();
         for (Object mail : mailsJSON){
             this.mails.add(new Mail((JSONObject) mail));
         }
-
+        /*  TODO: THIS PART IS BUGGY
         JSONObject jo = (JSONObject) obj.get("folders");
         this.folders = new HashMap<String, ArrayList<String> >();
         for (Object key: jo.keySet()) {
-            this.folders.put(key.toString() , (ArrayList<String>) jo.get(key));
+            this.folders.put(key.toString() , (ArrayList<String>) jo.get((String)key));
         }
+        System.out.println("\n\n\n\n\n\n\n\n\n\nHERE ------------\n\n\n\n\n\n");
+        */
     }
 
     public String getEmail() {
@@ -82,7 +84,7 @@ public class User implements Serializable {
 
         if (contacts != null) {
             for (User u : contacts)
-                contactsJSON.add(u.toJSON());
+                contactsJSON.put(u.toJSON());
         }
         userJSON.put("contacts", contactsJSON);
 
@@ -90,7 +92,7 @@ public class User implements Serializable {
 
         if (mails != null) {
             for (Mail m : mails)
-                mailsJSON.add(m.toJSON());
+                mailsJSON.put(m.toJSON());
         }
         userJSON.put("mails", mailsJSON);
 
