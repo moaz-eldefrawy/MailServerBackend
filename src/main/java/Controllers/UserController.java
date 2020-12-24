@@ -51,6 +51,12 @@ public class UserController {
     }
 
 
+    @GetMapping("/getFolders")
+    public static String[] getFolders(@CookieValue(value="email") String email){
+        User user = StorageManager.retrieveUser(email);
+        return user.getFolders().keySet().stream().toArray(String[]::new);
+    }
+
     @DeleteMapping("/removeFolder")
     public static boolean removeFolder(@RequestBody String body, @CookieValue(value = "email") String email){
         JSONObject json = new JSONObject(body);
