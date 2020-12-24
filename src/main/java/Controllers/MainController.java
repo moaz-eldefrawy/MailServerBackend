@@ -72,15 +72,7 @@ public class MainController {
         
     }
 
-    //TODO: remove default value
 
-    @GetMapping(value = "/folders/{folderName}")
-    public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
-                                     @PathVariable String folderName) {
-        System.out.println(email);
-        return StorageManager.getUserMails(email, folderName);
-        //return "ok";
-    }
 
     @GetMapping(value = "/getMail")
     public Mail getMail(@CookieValue(value = "email") String email,
@@ -232,29 +224,6 @@ public class MainController {
     }
 
 
-    @PutMapping("/copy")
-    public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
-        JSONObject json = new JSONObject(body);
-        String id = (String) json.getString("id");
-        String folder = json.getString("folder");
-        return StorageManager.addMailToFolder(id, folder, email);
-    }
 
-    @PutMapping("/move")
-    public static boolean MoveMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
-        JSONObject json = new JSONObject(body);
-        String id = (String) json.getString("id");
-        String folderOrigin = json.getString("folderOrigin");
-        String folderDest = json.getString("folderDest");
-        return StorageManager.MoveMailToFolder(id, folderOrigin, folderDest, email);
-    }
-
-    @DeleteMapping("/remove")
-    public static boolean removeMailFromFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
-        JSONObject json = new JSONObject(body);
-        String id = (String) json.getString("id");
-        String folder = json.getString("folder");
-        return StorageManager.removeMailFromFolder(id, folder, email);
-    }
 
 }

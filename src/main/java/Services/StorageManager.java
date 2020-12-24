@@ -1,9 +1,7 @@
 package Services;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.UUID;
-
+import java.util.*;
 
 
 /*
@@ -117,10 +115,69 @@ public class StorageManager {
         return mails;
     }
 
+    public static boolean removeFolder(User user, String folderName){
+        HashMap<String, ArrayList<String>> folders = user.getFolders();
+
+        //folder name is from the main folders or doesn't exist in the user's folders
+        if (App.mainFolders.contains(folderName.toLowerCase()) || !folders.containsKey(folderName.toLowerCase()))
+            return false;
+
+        folders.remove(folderName);
+        user.setFolders(folders);
+        StorageManager.storeUser(user);
+        return true;
+    }
+
+    public static boolean addFolder(User user, String folderName){
+        HashMap<String, ArrayList<String>> folders = user.getFolders();
+        //folder name is from the main folders or already exists in the user's folders
+        if (App.mainFolders.contains(folderName.toLowerCase()) || folders.containsKey(folderName.toLowerCase()))
+            return false;
+
+        folders.put(folderName, new ArrayList<String>());
+        user.setFolders(folders);
+        StorageManager.storeUser(user);
+        return true;
+    }
+
+    public static boolean renameFolder(User user, String oldFolderName, String newFolderName){
+        HashMap<String, ArrayList<String>> folders = user.getFolders();
+
+        //new or old folder name is from the main folders
+        if (App.mainFolders.contains(oldFolderName.toLowerCase()) || App.mainFolders.contains(newFolderName.toLowerCase()))
+            return false;
+
+        //old folder name doesn't exist or new folder name exists already in the user's folders
+        if (!folders.containsKey(oldFolderName.toLowerCase()) || folders.containsKey(newFolderName.toLowerCase()))
+            return false;
+
+        //remove old folder
+        ArrayList<String> mails = folders.get(oldFolderName);
+        folders.remove(oldFolderName);
+
+        //add new folder
+        folders.put(newFolderName, mails);
+
+
+        user.setFolders(folders);
+        StorageManager.storeUser(user);
+        return true;
+    }
+
+    public static boolean changePassword(User user, String oldPassword, String newPassword){
+        if(!user.getPassword().equals(oldPassword))
+            return false;
+
+        user.setPassword(newPassword);
+        StorageManager.storeUser(user);
+        return true;
+    }
 
     public static boolean mailExists(String mailId){
         File file = new File(App.mailsFolderPath + File.separator + mailId);
         return file.exists();
     }
+
+
 
 }
