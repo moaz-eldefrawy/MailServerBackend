@@ -11,13 +11,13 @@ public class Sort {
      *
      * @param mails
      */
-    public static void priority(ArrayList mails) {
+    public static void priority(ArrayList<Mail> mails) {
        if (mails.size() == 0)
             throw new RuntimeException();
         PriorityQueue q = new PriorityQueue();
         for (int i = 0; i < mails.size(); i++) {
 
-            Mail mail = (Mail) mails.get(i);
+            Mail mail = mails.get(i);
             //	System.out.println(mail.getPriority());
             //		System.out.println(mail.getSubject());
 
@@ -30,12 +30,12 @@ public class Sort {
         for (int i = 0; i < queueSize; i++) {
             //	System.out.println(i);
             Object k = q.removeMin();
-            mails.add(k);
+            mails.add((Mail)k);
         }
     }
 
-    public static void iterativeQuickSort(ArrayList mails, String sortType) {
-        Stack stack = new Stack();
+    public static void iterativeQuickSort(ArrayList<Mail> mails, String sortType) {
+        Stack<Integer> stack = new Stack<Integer>();
         stack.push(0);
         stack.push(mails.size());
         while (stack != null && !stack.isEmpty()) {
@@ -62,7 +62,7 @@ public class Sort {
 
     }
 
-    private static int partitionBody(ArrayList mails, int position, int start, int end) {
+    private static int partitionBody(ArrayList<Mail> mails, int position, int start, int end) {
         int low = start;
         int high = end - 2;
         Mail piv = (Mail) mails.get(position);
@@ -95,7 +95,7 @@ public class Sort {
         return index;
     }
 
-    private static int partitionSender(ArrayList mails, int position, int start, int end) {
+    private static int partitionSender(ArrayList<Mail> mails, int position, int start, int end) {
         int low = start;
         int high = end - 2;
         Mail piv = (Mail) mails.get(position);
@@ -128,7 +128,7 @@ public class Sort {
         return index;
     }
 
-    private static int partitionSubject(ArrayList mails, int position, int start, int end) {
+    private static int partitionSubject(ArrayList<Mail> mails, int position, int start, int end) {
         int low = start;
         int high = end - 2;
         Mail piv = (Mail) mails.get(position);
@@ -171,7 +171,7 @@ public class Sort {
      * @return
      */
 
-    private static int partitionDate(ArrayList mails, int position, int start, int end) {
+    private static int partitionDate(ArrayList<Mail> mails, int position, int start, int end) {
         int low = start;
         int high = end - 2;
         Mail piv = (Mail) mails.get(position);
@@ -203,7 +203,7 @@ public class Sort {
         return index;
     }
 
-    public static void swap(ArrayList mails, int i, int j) {
+    public static void swap(ArrayList<Mail> mails, int i, int j) {
         Mail temp = (Mail) mails.get(i);
         mails.set(i, mails.get(j));
         mails.set(j, temp);

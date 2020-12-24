@@ -12,18 +12,18 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         //System.out.println(user.password);
-        HashMap<String, ArrayList> folders = new HashMap<String, ArrayList>();
-        folders.put("inbox", new ArrayList());
+        HashMap<String, ArrayList<String>> folders = new HashMap<String, ArrayList<String>>();
+        folders.put("inbox", new ArrayList<String>());
         UUID ID = UUID.randomUUID();
         UUID ID2 = UUID.fromString( ID.toString() );
         System.out.println( ID == ID2 );
-        folders.get("inbox").add(ID);
+        folders.get("inbox").add(ID.toString());
         folders.get("inbox").add("fine");
         folders.get("inbox").remove("fine");
         for(int i=0; i<folders.get("inbox").size(); i++){
             System.out.println( folders.get("inbox").get(i) );
         }
-        MainController a = new MainController();
+        //MainController a = new MainController();
     }
 
     public static void sortTesting(){
@@ -38,7 +38,7 @@ public class Main {
         System.out.println(q.size());
 
 
-        ArrayList mails = new ArrayList();
+        ArrayList<Mail> mails = new ArrayList<Mail>();
 
         Mail mail1 = new Mail("ahmed@gmVail.com", "subject3", new Date(),
                 3);
@@ -67,9 +67,9 @@ public class Main {
 
     }
 
-    static void printMails(ArrayList arr){
+    static void printMails(ArrayList<Mail> arr){
         for(int i=0; i<arr.size(); i++){
-            System.out.println(((Mail) arr.get(i)).getSubject());
+            System.out.println((arr.get(i)).getSubject());
         }
         System.out.print("\n");
     }
