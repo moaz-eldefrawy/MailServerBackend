@@ -1,3 +1,4 @@
+/*
 import Services.App;
 import Services.Authentication;
 import Services.FileManager;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationTest {
-
+        
     @Test
     void signUpAndSignIn() throws IOException {
         App app =  new App();
@@ -37,3 +38,4 @@ class AuthenticationTest {
 
     }
 }
+*/
