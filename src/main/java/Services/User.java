@@ -1,7 +1,5 @@
 package Services;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -11,22 +9,26 @@ import org.json.JSONObject;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public String email;
-    public String password;
-    public ArrayList<User> contacts;
-    public HashMap<String, ArrayList<String> > folders;
-    public ArrayList<Mail> mails;
+    private String email;
+    private String password;
+    private ArrayList<User> contacts;
+    private HashMap<String, ArrayList<String> > folders;
+    private ArrayList<Mail> mails;
 
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public User() {
         this.contacts = new ArrayList<>();
         this.folders = new HashMap<String, ArrayList<String>>();
         this.mails = new ArrayList<Mail>();
-        this.folders.put("inbox", new ArrayList());
-        this.folders.put("trash", new ArrayList());
-        this.folders.put("drafts", new ArrayList());
-        this.folders.put("sent", new ArrayList());
+        this.folders.put("inbox", new ArrayList<String>());
+        this.folders.put("trash", new ArrayList<String>());
+        this.folders.put("drafts", new ArrayList<String>());
+        this.folders.put("sent", new ArrayList<String>());
+    }
+
+    public User(String email, String password) {
+        this();
+        this.email = email;
+        this.password = password;
     }
 
     public User (JSONObject obj){
@@ -72,6 +74,27 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public ArrayList<User> getContacts() {
+        return contacts;
+    }
+    public void setContacts(ArrayList<User> contacts) {
+        this.contacts = contacts;
+    }
+
+    public HashMap<String, ArrayList<String>> getFolders() {
+        return folders;
+    }
+    public void setFolders(HashMap<String, ArrayList<String>> folders) {
+        this.folders = folders;
+    }
+
+    public ArrayList<Mail> getMails() {
+        return mails;
+    }
+
+    public void setMails(ArrayList<Mail> mails) {
+        this.mails = mails;
+    }
 
     public JSONObject toJSON(){
         JSONObject userJSON = new JSONObject();

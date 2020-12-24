@@ -1,46 +1,47 @@
 package Controllers;
 
+import Services.App;
 import Services.Authentication;
 import Services.Mail;
 import Services.StorageManager;
 import Services.User;
 
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class MainController {
 
     private Authentication auth = Authentication.getInstance();
-    @PostMapping(path = "/signup")
-    public String signUp(@RequestBody String body) {
-        /*
-        JSONObject json = new JSONObject();
-        //User user = new User(email, password);
-        Boolean userCreated = auth.signUp(body, password);
-        if(userCreated) {
-            return "kolo mia mia";
-        }*/
-        
-        JSONObject json = new JSONObject(body);
-        String email = (String)json.get("email");
-        String password = (String)json.get("password");
+    private ObjectMapper m = new ObjectMapper();
 
-        JSONObject resp = new JSONObject();
-        resp.put("token", "gdklfgjdflgjdflkgldfh");
-        resp.put("user", "ahmed bahgat");
-        auth.signUp(email, password);
-        return resp.toString();
+
+
+    @PostMapping(path = "/signup")
+    public String signUp(@RequestBody String body, HttpServletResponse response) {
+        JSONObject json = new JSONObject(body);
+        String email = json.getString("email");
+        String password = json.getString("password");
+
+        if(auth.signUp(email, password)) {
+            String authString = "email=" + email + ";" + "Max-Age=99999999999999";
+            response.addHeader("Set-Cookie", authString);
+            return "{\"user\": \""+email+"\"}";
+        }
+        else
+            return "kolo sharafanta7";
     }
 
     @PostMapping(path = "/signin")
@@ -52,7 +53,7 @@ public class MainController {
         System.out.println("password: "+password);
         User user = auth.signIn(email, password);
 
-        if (user == null || !user.password.equals(password)) {
+        if (user == null || !user.getPassword().equals(password)) {
             response.setStatus(401);
         } else {
             String authString = "email=" + email + ";" + "Max-Age=99999999999999";
@@ -71,36 +72,53 @@ public class MainController {
         //return "ok";
     }
 
-    @PostMapping(value = "/compose", consumes = "application/x-www-form-urlencoded")
-    public boolean compose(@CookieValue(value = "email", defaultValue = "shaka@adel.com") String email, Mail mail, String receivers) {
-        System.out.println(receivers);
-        System.out.println(mail.subject);
-        if (email == null)
-            email = "shaka@adel.com";
+    @GetMapping(value  = "/test")
+    public User testF(){
+        User u = StorageManager.retrieveUser("eren@attack.titan");
+        return u;
+    }
 
-        System.out.println(email);
-        // store email
-        StorageManager.storeMail(mail);
+
+    @PostMapping(value = "/compose")
+    public ResponseEntity<String> compose(/*@CookieValue(value = "email", defaultValue = "shaka@adel.com") String email,*/ 
+    @RequestParam(value = "files", required = false) MultipartFile[] files, @RequestParam(value = "mail") String jsonMail,
+    @RequestParam(value = "receivers") String[] receivers) {
+        /*
+        // TODO: handle in-valid sender
         if (!mail.sender.equals(email)) {
-            // TODO: handle in-valid sender
             return false;
-        }
-        // add it to sent folder
+        }*/
 
-        StorageManager.addMailToFolder(mail.ID, "sent", email);
+        try{
+            Mail mail = m.readValue(jsonMail, Mail.class);
+            String mailFolder = App.mailsFolderPath + File.separator + mail.getID();
+            if(files != null)
+                for(MultipartFile mpfile: files)
+                    mail.addAttachment(mailFolder + File.separator + mpfile.getOriginalFilename());
+            StorageManager.storeMail(mail);
+            StorageManager.addMailToFolder(mail.getID(), "sent", mail.getSender());
 
-        String[] receiver = receivers.split(",", 0);
-
-        Authentication auth = Authentication.getInstance();
-        for (String rec : receiver) {
-            if (auth.userExists(rec)) {
-                StorageManager.addMailToFolder(mail.ID, "inbox", rec);
-                System.out.println(rec);
-            } else {
-                // TODO:
+            for (String rec : receivers) {
+                if (auth.userExists(rec)) {
+                    StorageManager.addMailToFolder(mail.getID(), "inbox", rec);
+                    System.out.println(rec);
+                }
+            }    
+            if(files != null)
+            {
+                for (MultipartFile mpfile : files){
+                    System.out.println(mpfile.getOriginalFilename());
+                    File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
+                    file.createNewFile();
+                    mpfile.transferTo(file);
+                }
+            
             }
+
+            return new ResponseEntity<String>("email sent successfully", HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.toString(), HttpStatus.OK);
         }
-        return true;
     }
 
     @PostMapping(
@@ -109,6 +127,8 @@ public class MainController {
         return StorageManager.retrieveUser("some2");
     }
 
+    //SignOut is performed in the frontend only
+    /*
     @GetMapping(value = "/signout")
     public void signout(@CookieValue(value = "email") String email, HttpServletResponse response,
                         HttpServletRequest request) {
@@ -117,19 +137,30 @@ public class MainController {
         response.addCookie(cookie);
         return;
     }
+    */
 
     @PutMapping("/copy")
-    public static boolean addMailToFolder(String id, String folder, @CookieValue(value = "email") String email) {
+    public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
+        JSONObject json = new JSONObject(body);
+        String id = (String) json.getString("id");
+        String folder = json.getString("folder");
         return StorageManager.addMailToFolder(id, folder, email);
     }
 
     @PutMapping("/move")
-    public static boolean MoveMailToFolder(String id, String folderOrigin, String folderDest, @CookieValue(value = "email") String email) {
+    public static boolean MoveMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
+        JSONObject json = new JSONObject(body);
+        String id = (String) json.getString("id");
+        String folderOrigin = json.getString("folderOrigin");
+        String folderDest = json.getString("folderDest");
         return StorageManager.MoveMailToFolder(id, folderOrigin, folderDest, email);
     }
 
     @DeleteMapping("/remove")
-    public static boolean removeMailFromFolder(String id, String folder, @CookieValue(value = "email") String email) {
+    public static boolean removeMailFromFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
+        JSONObject json = new JSONObject(body);
+        String id = (String) json.getString("id");
+        String folder = json.getString("folder");
         return StorageManager.removeMailFromFolder(id, folder, email);
     }
 

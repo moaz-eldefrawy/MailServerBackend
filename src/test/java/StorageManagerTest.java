@@ -53,27 +53,27 @@ public class StorageManagerTest {
         User user1 = new User("some2@gmail.com","some");
         User user2 = new User("some2@gmail.com","some");
         Mail mail1 =  new Mail("sender@mail12.com", "Subject 2 ysta", new Date(System.currentTimeMillis()), 4);
-        mail1.attachments.add("attachment1");
+        mail1.addAttachment("attachment1");
         Mail mail2 =  new Mail("sender@mail12.com", "Subject 3 ysta", new Date(System.currentTimeMillis()), 4);
-        mail1.attachments.add("attachment1");
+        mail1.addAttachment("attachment1");
         StorageManager.storeMail(mail1);
         StorageManager.storeMail(mail2);
 
-        user2.folders.get("inbox").add( mail1.ID );
-        user2.folders.get("sent").add( mail2.ID );
+        user2.getFolders().get("inbox").add( mail1.getID() );
+        user2.getFolders().get("sent").add( mail2.getID() );
         StorageManager.storeUser(user1);
-        StorageManager.addMailToFolder(mail1.ID,"inbox","some2@gmail.com");
-        StorageManager.addMailToFolder(mail2.ID,"sent","some2@gmail.com");
+        StorageManager.addMailToFolder(mail1.getID(),"inbox","some2@gmail.com");
+        StorageManager.addMailToFolder(mail2.getID(),"sent","some2@gmail.com");
         user1 = StorageManager.retrieveUser("some2@gmail.com");
         assertTrue(user1.equals(user2));
 
-        user2.folders.get("inbox").remove(mail1.ID);
+        user2.getFolders().get("inbox").remove(mail1.getID());
         user1 = StorageManager.retrieveUser("some2@gmail.com");
         StorageManager.removeMailFromFolder(mail1.ID,"inbox","some2@gmail.com");
         user1 = StorageManager.retrieveUser("some2@gmail.com");
         assertTrue(user2.equals(StorageManager.retrieveUser("some2@gmail.com")));
     }
-
+    
     boolean userEquals(User a, User b){
         // Email address
         if (!a.email.equals(b.email))

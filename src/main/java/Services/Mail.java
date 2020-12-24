@@ -1,8 +1,7 @@
 package Services;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,26 +13,31 @@ import java.util.UUID;
 
 
 @JsonIgnoreProperties(ignoreUnknown =  true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Mail implements Serializable {
 
     public static final long serialVersionUID = 3347324734166375499L;
-    @JsonProperty("sender") public String sender;
-    @JsonProperty("subject") public String subject;
-    public Date date ;
-    @JsonProperty("priority") public Integer priority;
-    public String status;
-    public ArrayList<String> attachments;
-    public String ID;
-    @JsonProperty("body") public String bodyText;
+    private String sender;
+    private String subject;
+    private Date date;
+    private Integer priority;
+    private String status;
+    private ArrayList<String> attachments;
+    private String ID;
+    private String bodyText;
 
+
+    
     //TODO: JsonProperty for date
     public Mail(){
         ID = UUID.randomUUID().toString();
         date =  new Date(System.currentTimeMillis());
         status = "unread";
         bodyText = "";
-        attachments =new ArrayList<>();
+        attachments =new ArrayList<String>();
     }
+
+    
     public Mail(String sender,
          String subject, Date date,
                 Integer priority){
@@ -47,7 +51,27 @@ public class Mail implements Serializable {
         this.bodyText = "";
     }
 
+        public Mail (JSONObject obj){
+        if (obj == null)
+            throw new RuntimeException("Mail Constructor Parameter null");
 
+        this.sender = (String) obj.get("sender");
+        this.subject = (String) obj.get("subject");
+
+        //TODO figure out how to parse the date
+        this.date = new Date((long)obj.get("date"));
+        this.priority = (int)(long)obj.get("priority");
+        this.status = (String) obj.get("status");
+
+        this.attachments = new ArrayList<>();
+        
+        this.ID = (String) obj.get("ID");
+        this.bodyText = (String) obj.get("bodyText");
+    }
+
+
+    
+    
     public boolean equals(Mail b){
         if (!this.sender.equals(b.sender))
             return false;
@@ -67,35 +91,20 @@ public class Mail implements Serializable {
             return false;
         return true;
     }
+    
 
-
-    public Mail (JSONObject obj){
-        if (obj == null)
-            throw new RuntimeException("Mail Constructor Parameter null");
-
-        this.sender = (String) obj.get("sender");
-        this.subject = (String) obj.get("subject");
-
-        //TODO figure out how to parse the date
-        this.date = new Date((long)obj.get("date"));
-        this.priority = (int)(long)obj.get("priority");
-        this.status = (String) obj.get("status");
-
-        //TODO parse attachments
-        JSONArray attachmentsJSON = (JSONArray) obj.get("attachments");
-        this.attachments = new ArrayList<>();
-        //this.attachments.addAll(attachmentsJSON);
-
-
-        this.ID = (String) obj.get("ID");
-        this.bodyText = (String) obj.get("bodyText");
+    public void addAttachment(String attachment){
+        this.attachments.add(attachment);
     }
 
-    // TODO:
-    public void addAttachment(){
-
+    public ArrayList<String> getAttachments() {
+        return attachments;
     }
 
+    public void setAttachments(ArrayList<String> attachments) {
+        this.attachments = attachments;
+    }
+    
     public String getSender() {
         return sender;
     }
@@ -152,7 +161,7 @@ public class Mail implements Serializable {
         this.bodyText = bodyText;
     }
 
-
+    
     public JSONObject toJSON(){
         JSONObject mailJSON = new JSONObject();
 

@@ -6,9 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.JSONObject;
 
 public class FileManager {
+
+	private static ObjectMapper mapper = new ObjectMapper();
+
 	public static void writeToFile(Object obj, String filePath) {
 		try {
 			FileOutputStream fout = new FileOutputStream(filePath);
@@ -81,7 +86,7 @@ public class FileManager {
 			copyFile(sourceFolderPath,destinationFolderPath);
 		}
 	}
-
+	/*
 	public static void writeToJSONFile(JSONObject obj, String filePath) {
 		try {
 			FileWriter file = new FileWriter(filePath + ".json");
@@ -91,10 +96,23 @@ public class FileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}*/
+
+	public static void writeToJSONFile(Object obj, String filePath) {
+		try {
+			String json = mapper.writeValueAsString(obj);
+			FileWriter file = new FileWriter(filePath + ".json");
+			file.write(json);
+			file.flush();
+			file.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
-
-	public  static JSONObject getJSONObj(String filePath){
+	
+	// 0 -> user class
+	// 1 -> email class
+	public static Object getJSONObj(String filePath, Integer type){
 		//JSON parser object to parse read file
 		//JSONParser jsonParser = new JSONParser();
 
@@ -102,7 +120,11 @@ public class FileManager {
 		{
 			FileReader reader = new FileReader(filePath + ".json");
 			String content = new String(Files.readAllBytes(Paths.get(filePath+".json")), StandardCharsets.UTF_8);
-			JSONObject jsonObject = new JSONObject(content);
+			Object jsonObject = null;
+			if(type == 0)
+				jsonObject = mapper.readValue(content, User.class);
+			else if(type == 1)
+				jsonObject = mapper.readValue(content, Mail.class);
 			reader.close();
 			return jsonObject;
 

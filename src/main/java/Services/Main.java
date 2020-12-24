@@ -69,7 +69,7 @@ public class Main {
 
     static void printMails(ArrayList arr){
         for(int i=0; i<arr.size(); i++){
-            System.out.println(((Mail) arr.get(i)).subject);
+            System.out.println(((Mail) arr.get(i)).getSubject());
         }
         System.out.print("\n");
     }

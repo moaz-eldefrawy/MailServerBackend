@@ -5,38 +5,42 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 
+
 /*
 
     includes database queries
  */
 public class StorageManager {
 
-
     public static void storeUser(String email, String password)
     {
         User newUser = new User(email, password);
         String userFilePath = App.usersFolderPath + File.separator
                 + email;
-        FileManager.writeToJSONFile(newUser.toJSON(), userFilePath);
+        FileManager.writeToJSONFile(newUser, userFilePath);
     }
 
     public static void storeUser(User u) {
         String userFilePath = App.usersFolderPath + File.separator
-                + u.email;
-        FileManager.writeToJSONFile(u.toJSON(), userFilePath);
+                + u.getEmail();
+        try {
+            FileManager.writeToJSONFile(u, userFilePath);
+        }catch(Exception e) {
+
+        }
     }
 
     public static User retrieveUser(String email)
     {
         String userFilePath = App.usersFolderPath + File.separator
                 + email;
-        User user = new User(FileManager.getJSONObj(userFilePath));
+        User user = (User)FileManager.getJSONObj(userFilePath, 0);
         return user;
     }
 
     public static void storeMail(Mail mail){
         String mailPath = App.mailsFolderPath + File.separator +
-                mail.ID;
+                mail.getID();
 
         File mailFolder = new File(mailPath);
         mailFolder.mkdirs();
@@ -53,7 +57,7 @@ public class StorageManager {
                 ID;
         String mailFilePath = mailFolderPath + File.separator
                 + "mail";
-        Mail mail = new Mail(FileManager.getJSONObj(mailFilePath));
+        Mail mail = (Mail)FileManager.getJSONObj(mailFilePath, 1);
         return mail;
     }
 
@@ -61,7 +65,7 @@ public class StorageManager {
         if(!mailExists(mailID))
             return false;
         User user = retrieveUser(userEmail);
-        ArrayList folder = user.folders.get(folderName);
+        ArrayList<String> folder = user.getFolders().get(folderName);
         if(folder == null)
             return false;
         folder.add(mailID);
@@ -73,9 +77,9 @@ public class StorageManager {
         if(!mailExists(mailID))
             return false;
         User user = retrieveUser(email);
-        if( user.folders.get(folderName) == null)
+        if( user.getFolders().get(folderName) == null)
             return false;
-        user.folders.get(folderName).remove(mailID);
+        user.getFolders().get(folderName).remove(mailID);
         StorageManager.storeUser(user);
         return true;
 
@@ -94,7 +98,7 @@ public class StorageManager {
     }
 
     public static ArrayList<Mail> getUserMails(User user, String folderName) {
-        ArrayList folder = user.folders.get(folderName);
+        ArrayList<String> folder = user.getFolders().get(folderName);
         ArrayList<Mail> mails = new ArrayList<Mail>();
         for (int i = 0; i < folder.size(); i++) {
             mails.add(StorageManager.getMail( (String)(folder.get(i))));
