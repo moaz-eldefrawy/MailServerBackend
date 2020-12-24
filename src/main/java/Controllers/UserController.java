@@ -19,16 +19,30 @@ public class UserController {
 
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
-                                     @PathVariable String folderName) {
-        System.out.println(email);
-        return StorageManager.getUserMails(email, folderName);
+                                     @PathVariable String folderName,
+                                     @RequestBody String body) {
+
+        JSONObject json = new JSONObject(body);
+
+        // date ("default"), subject, sender, body, priority
+        String sortType = json.getString("sortType");
+
+        // 1 - based index
+        Integer pageNumber = json.getInt("page");
+
+        ArrayList<Mail> mails = StorageManager.getUserMails(email, folderName);
+
+        //sorts in place
+        StorageManager.sortMails(mails, sortType);
+
+        return StorageManager.getPage(mails, pageNumber);
         //return "ok";
     }
 
     @PutMapping("/copy")
     public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
         JSONObject json = new JSONObject(body);
-        String id = (String) json.getString("id");
+        String id = json.getString("id");
         String folder = json.getString("folder");
         return StorageManager.addMailToFolder(id, folder, email);
     }

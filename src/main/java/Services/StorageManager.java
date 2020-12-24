@@ -67,6 +67,7 @@ public class StorageManager {
         if(folder == null)
             return false;
         folder.add(mailID);
+        System.out.println(user.getFolders().get(folderName).get(0));
         StorageManager.storeUser(user);
         return  true;
     }
@@ -92,10 +93,14 @@ public class StorageManager {
     }
 
     public static ArrayList<Mail> getUserMails(String email, String folderName){
-        return getUserMails( StorageManager.retrieveUser(email), folderName );
+        User user = StorageManager.retrieveUser(email);
+        System.out.println("Fetched user: " + user.getEmail());
+        return getUserMails( user, folderName );
     }
 
     public static Mail getUserMailById(String userEmail, String id, String folderName){
+        if(id == null)
+            return null;
         User user =  StorageManager.retrieveUser(userEmail);
         ArrayList<String> folder = user.getFolders().get(folderName);
 
@@ -110,9 +115,30 @@ public class StorageManager {
         ArrayList<String> folder = user.getFolders().get(folderName);
         ArrayList<Mail> mails = new ArrayList<Mail>();
         for (int i = 0; i < folder.size(); i++) {
+            System.out.println(folder.get(i));
             mails.add(StorageManager.getMail( (String)(folder.get(i))));
         }
         return mails;
+    }
+
+    /**
+     *
+     * @param mails
+     * @param sortType  "priority", "default", "subject", "sender", "body"
+     *
+     *      sorts the emails in place
+     */
+    public static void sortMails (ArrayList<Mail> mails, String sortType){
+        if (sortType.equals("priority")){
+            Sort.priority(mails);
+            return;
+        }
+        Sort.iterativeQuickSort(mails, sortType);
+    }
+
+    public static ArrayList<Mail> getPage (ArrayList<Mail> mails, int pageNumber){
+        pageNumber--;
+        return new ArrayList<Mail>(mails.subList(pageNumber * 10, pageNumber * 10 + 10));
     }
 
     public static boolean removeFolder(User user, String folderName){

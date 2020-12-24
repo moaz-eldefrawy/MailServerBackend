@@ -80,9 +80,12 @@ public class MainController {
         return StorageManager.getUserMailById(email, emailId, folderName);
     }
 
-    @PostMapping(value = "/saveDraft")
-    public ResponseEntity<String> saveDraft(@CookieValue(value = "email") String userEmail, 
-    @RequestParam(value = "files", required = false) MultipartFile[] files, @RequestParam(value = "mail") String jsonMail) {
+    @PostMapping(value = "/compose")
+    public ResponseEntity<String> compose(@CookieValue(value = "email") String userEmail, 
+    @RequestParam(value = "files", required = false) MultipartFile[] files,
+    @RequestParam(value = "mail") String jsonMail,
+    @RequestParam(value = "compose") Boolean isCompose,
+    @RequestParam(value = "receivers")String[] receivers) {
         
         try{
             Mail newDraft = m.readValue(jsonMail, Mail.class);
@@ -122,10 +125,23 @@ public class MainController {
                 }
             
             }
-        
+            System.out.println(isCompose);
+            if(isCompose) {
+                StorageManager.addMailToFolder(newDraft.getID(), "sent", newDraft.getSender());
+                StorageManager.removeMailFromFolder(newDraft.getID(), "drafts", newDraft.getSender());
+                System.out.println(newDraft.getSender());
+                for (String rec : receivers) {
+                    if (auth.userExists(rec)) {
+                        StorageManager.addMailToFolder(newDraft.getID(), "inbox", rec);
+                        System.out.println(rec);
+                    }
+                }    
+    
+            }
 
             return new ResponseEntity<String>(newDraft.getID(), HttpStatus.OK);
         }catch(Exception e){
+            e.printStackTrace();
             return new ResponseEntity<>(e.toString(), HttpStatus.OK);
         }
     }
@@ -138,47 +154,6 @@ public class MainController {
     }
 
 
-    @PostMapping(value = "/compose")
-    public ResponseEntity<String> compose(@CookieValue(value = "email") String email, 
-    @RequestParam(value = "files", required = false) MultipartFile[] files, @RequestParam(value = "mail") String jsonMail,
-    @RequestParam(value = "receivers") String[] receivers) {
-        
-        try{
-            Mail mail = m.readValue(jsonMail, Mail.class);
-
-            if (!mail.getSender().equals(email)) {
-                return new ResponseEntity<String>("kolo sharafanta7", HttpStatus.BAD_REQUEST);
-            }
-
-            String mailFolder = App.mailsFolderPath + File.separator + mail.getID();
-            if(files != null)
-                for(MultipartFile mpfile: files)
-                    mail.addAttachment(mpfile.getOriginalFilename());
-            StorageManager.storeMail(mail);
-            StorageManager.addMailToFolder(mail.getID(), "sent", mail.getSender());
-
-            for (String rec : receivers) {
-                if (auth.userExists(rec)) {
-                    StorageManager.addMailToFolder(mail.getID(), "inbox", rec);
-                    System.out.println(rec);
-                }
-            }    
-            if(files != null)
-            {
-                for (MultipartFile mpfile : files){
-                    System.out.println(mpfile.getOriginalFilename());
-                    File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
-                    file.createNewFile();
-                    mpfile.transferTo(file);
-                }
-            
-            }
-
-            return new ResponseEntity<String>("email sent successfully", HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity<>(e.toString(), HttpStatus.OK);
-        }
-    }
 
     @PostMapping(
             path = "/test5", consumes = "application/x-www-form-urlencoded")
@@ -186,17 +161,6 @@ public class MainController {
         return StorageManager.retrieveUser("some2");
     }
 
-    //SignOut is performed in the frontend only
-    /*
-    @GetMapping(value = "/signout")
-    public void signout(@CookieValue(value = "email") String email, HttpServletResponse response,
-                        HttpServletRequest request) {
-        Cookie cookie = new Cookie("email", "");
-        cookie.setMaxAge(-1);
-        response.addCookie(cookie);
-        return;
-    }
-    */
     
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadAttachment(@CookieValue(value = "email")String email,
