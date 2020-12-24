@@ -15,11 +15,11 @@ public class Interceptor implements HandlerInterceptor {
             (HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
-        /*System.out.println("Pre Handle method is Calling");
+        //System.out.println("Pre Handle method is Calling");
 
         System.out.println("raw cookie = " + request.getHeader("Cookie"));
 
-        System.out.println(request.getCookies()[0]);
+        /*System.out.println(request.getCookies()[0]);
         for (Cookie cookie : request.getCookies()){
             cookie.getName();
         }*/

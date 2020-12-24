@@ -121,6 +121,26 @@ public class StorageManager {
         return mails;
     }
 
+    /**
+     *
+     * @param mails
+     * @param sortType  "priority", "default", "subject", "sender", "body"
+     *
+     *      sorts the emails in place
+     */
+    public static void sortMails (ArrayList<Mail> mails, String sortType){
+        if (sortType.equals("priority")){
+            Sort.priority(mails);
+            return;
+        }
+        Sort.iterativeQuickSort(mails, sortType);
+    }
+
+    public static ArrayList<Mail> getPage (ArrayList<Mail> mails, int pageNumber){
+        pageNumber--;
+        return new ArrayList<Mail>(mails.subList(pageNumber * 10, pageNumber * 10 + 10));
+    }
+
     public static boolean removeFolder(User user, String folderName){
         HashMap<String, ArrayList<String>> folders = user.getFolders();
 
