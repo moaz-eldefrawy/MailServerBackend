@@ -18,7 +18,7 @@ public class UserController {
     //TODO: remove default value
 
     @GetMapping(value = "/folders/{folderName}")
-    public ArrayList<Mail> listMails(@CookieValue(value = "email", defaultValue = "shaka@adel.com") String email,
+    public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
                                      @PathVariable String folderName,
                                      @RequestBody String body) {
 

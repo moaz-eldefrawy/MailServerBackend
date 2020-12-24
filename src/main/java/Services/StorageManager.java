@@ -132,7 +132,7 @@ public class StorageManager {
 
     public static ArrayList<Mail> getPage (ArrayList<Mail> mails, int pageNumber){
         pageNumber--;
-        return (ArrayList<Mail>) mails.subList(pageNumber * 10, pageNumber * 10 + 10);
+        return new ArrayList<Mail>(mails.subList(pageNumber * 10, pageNumber * 10 + 10));
     }
 
     public static boolean removeFolder(User user, String folderName){

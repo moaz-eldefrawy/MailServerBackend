@@ -24,11 +24,12 @@ public class SortTest {
 
 
         //Add a bunch of mails
-        for (int c = 0;c < 10;c++) {
+        for (int c = 0;c < 30;c++) {
             Mail mail = new Mail(String.format("sender%d@mail.com", c), //sender
                     String.format("Subject no %d", c),                  //subject
                     new Date(System.currentTimeMillis()),               //date
-                    (int) Math.round(Math.random() * 4));               //random priority
+                    (int) Math.round(Math.random() * 4) + 1);    //random priority
+            // (priority <= 0 will throw "Invalid Key", see PriorityQueue.insert()
 
             StorageManager.storeMail(mail);
             StorageManager.addMailToFolder(mail.getID(), "inbox", email);

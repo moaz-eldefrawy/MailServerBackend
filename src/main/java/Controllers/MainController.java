@@ -74,15 +74,15 @@ public class MainController {
 
 
 
-    @GetMapping(value = "/folders/{folderName}")
+    /*@GetMapping(value = "/folders/{folderName}")
     public Mail getDraft(@CookieValue(value = "email") String email,
     @PathVariable String folderName, @RequestParam(name = "emailId")String emailId){
         return StorageManager.getUserMailById(email, emailId, folderName);
-    }
+    }*/
 
-    @GetMapping(value  = "/test")
+    @GetMapping(value  = "/")
     public User testF(){
-        User u = StorageManager.retrieveUser("eren@attack.titan");
+        User u = StorageManager.retrieveUser("shaka@adel.com");
         return u;
     }
 
