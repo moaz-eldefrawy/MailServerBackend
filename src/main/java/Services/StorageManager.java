@@ -98,12 +98,15 @@ public class StorageManager {
         return getUserMails( user, folderName );
     }
 
+
+    // TODO: storage manager doesn't authenticate if user has the mail
     public static Mail getUserMailById(String userEmail, String id, String folderName){
         if(id == null)
             return null;
         User user =  StorageManager.retrieveUser(userEmail);
         ArrayList<String> folder = user.getFolders().get(folderName);
 
+        // TODO: replace with .contains
         for (int i = 0; i < folder.size(); i++) {
             if(id.equals(folder.get(i)))
                 return StorageManager.getMail(id);
@@ -115,7 +118,7 @@ public class StorageManager {
         ArrayList<String> folder = user.getFolders().get(folderName);
         ArrayList<Mail> mails = new ArrayList<Mail>();
         for (int i = 0; i < folder.size(); i++) {
-            System.out.println(folder.get(i));
+            //System.out.println(folder.get(i));
             mails.add(StorageManager.getMail( (String)(folder.get(i))));
         }
         return mails;
@@ -136,7 +139,7 @@ public class StorageManager {
         Sort.iterativeQuickSort(mails, sortType);
     }
 
-    final static Integer mailsPerPage=10;
+    final static Integer mailsPerPage = 10;
     public static ArrayList<Mail> getPage (ArrayList<Mail> mails, int pageNumber){
         pageNumber--;
         return new ArrayList<Mail>(mails.subList(pageNumber * mailsPerPage, pageNumber * (mailsPerPage + 1)));
