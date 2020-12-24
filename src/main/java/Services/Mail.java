@@ -51,6 +51,10 @@ public class Mail implements Serializable {
         this.bodyText = "";
     }
 
+    public void genRandomID() {
+        this.ID = UUID.randomUUID().toString();
+    }
+
         public Mail (JSONObject obj){
         if (obj == null)
             throw new RuntimeException("Mail Constructor Parameter null");

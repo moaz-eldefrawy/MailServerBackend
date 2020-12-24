@@ -29,34 +29,7 @@ public class FileManagerTest {
 	JSONObject jsonObj1 = new JSONObject(Map.of("adel","shakal", "naguib", "sweras", "hamada", "7alabo2a"));
 	JSONObject jsonObj2 = new JSONObject(Map.of("moaz","fathy", "ahmed", "bahgat", "abdallah", "yasser"));
 
-	@Test
-	public void test() {
-		dummyFolder.mkdirs();
-		writeAndRead();
-		try {copyFile();}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-	}
 	
-	public void writeAndRead() {
-
-		//Normal writeToFile tests
-		FileManager.writeToFile(arr, dummyFilepath);
-		assertArrayEquals(arr, (int[])FileManager.getFile(dummyFilepath) );
-
-
-		// JSON tests
-		FileManager.writeToJSONFile(jsonObj1, dummyFolderPath + File.separator + "7alabo2a");
-		FileManager.writeToJSONFile(jsonObj2, dummyFolderPath + File.separator + "Team7");
-
-		JSONObject read1 = FileManager.getJSONObj(dummyFolderPath + File.separator + "7alabo2a");
-		JSONObject read2 = FileManager.getJSONObj(dummyFolderPath + File.separator + "Team7");
-
-		assertEquals(read1, jsonObj1);
-		assertEquals(read2, jsonObj2);
-
-	}
 	
 	public void copyFile() throws IOException {
 		

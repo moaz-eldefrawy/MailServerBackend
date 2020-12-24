@@ -74,15 +74,66 @@ public class MainController {
 
 
 
-    /*@GetMapping(value = "/folders/{folderName}")
-    public Mail getDraft(@CookieValue(value = "email") String email,
-    @PathVariable String folderName, @RequestParam(name = "emailId")String emailId){
+    @GetMapping(value = "/getMail")
+    public Mail getMail(@CookieValue(value = "email") String email,
+    @RequestParam(name = "emailId") String emailId, @RequestParam(name = "folderName") String folderName) {
         return StorageManager.getUserMailById(email, emailId, folderName);
-    }*/
+    }
 
-    @GetMapping(value  = "/")
+    @PostMapping(value = "/saveDraft")
+    public ResponseEntity<String> saveDraft(@CookieValue(value = "email") String userEmail, 
+    @RequestParam(value = "files", required = false) MultipartFile[] files, @RequestParam(value = "mail") String jsonMail) {
+        
+        try{
+            Mail newDraft = m.readValue(jsonMail, Mail.class);
+            Mail oldDraft = StorageManager.getUserMailById(userEmail, newDraft.getID(), "drafts");
+            if(oldDraft != null){
+                newDraft.setID(oldDraft.getID());
+            }
+            else
+                newDraft.genRandomID();
+            
+            String mailFolder = App.mailsFolderPath + File.separator + newDraft.getID();
+
+            File oldDraftFolder = new File(mailFolder);
+            File[] filesInFolder = oldDraftFolder.listFiles();
+
+            if(filesInFolder != null) {
+                ArrayList<String> fileNames = newDraft.getAttachments();
+                for(File f: filesInFolder)
+                    if(fileNames == null || fileNames.size() == 0 || !fileNames.contains(f.getName()))
+                        f.delete();
+            }
+            if(files != null)
+                for(MultipartFile mpfile: files)
+                    newDraft.addAttachment(mpfile.getOriginalFilename());
+
+            StorageManager.storeMail(newDraft);
+            if(oldDraft == null)
+                StorageManager.addMailToFolder(newDraft.getID(), "drafts", newDraft.getSender());
+
+            if(files != null)
+            {
+                for (MultipartFile mpfile : files){
+                    System.out.println(mpfile.getOriginalFilename());
+                    File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
+                    file.createNewFile();
+                    mpfile.transferTo(file);
+                }
+            
+            }
+        
+
+            return new ResponseEntity<String>(newDraft.getID(), HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.toString(), HttpStatus.OK);
+        }
+    }
+
+
+    @GetMapping(value  = "/test")
     public User testF(){
-        User u = StorageManager.retrieveUser("shaka@adel.com");
+        User u = StorageManager.retrieveUser("eren@attack.titan");
         return u;
     }
 
