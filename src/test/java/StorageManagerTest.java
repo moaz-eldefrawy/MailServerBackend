@@ -37,9 +37,9 @@ public class StorageManagerTest {
         assertTrue(mailEquals(mail, StorageManager.getMail(mail.getID())));
 
         mail =  new Mail("sender@mail12.com", "Subject 2 ysta", new Date(System.currentTimeMillis()), 4);
-        mail.attachments.add("attachment1");
-        mail.attachments.add("attachment2");
-        mail.attachments.add("attachment3");
+        mail.getAttachments().add("attachment1");
+        mail.getAttachments().add("attachment2");
+        mail.getAttachments().add("attachment3");
         StorageManager.storeMail(mail);
         assertTrue(mailEquals(mail, StorageManager.getMail(mail.getID())));
 
@@ -69,37 +69,37 @@ public class StorageManagerTest {
 
         user2.getFolders().get("inbox").remove(mail1.getID());
         user1 = StorageManager.retrieveUser("some2@gmail.com");
-        StorageManager.removeMailFromFolder(mail1.ID,"inbox","some2@gmail.com");
+        StorageManager.removeMailFromFolder(mail1.getID(),"inbox","some2@gmail.com");
         user1 = StorageManager.retrieveUser("some2@gmail.com");
         assertTrue(user2.equals(StorageManager.retrieveUser("some2@gmail.com")));
     }
     
     boolean userEquals(User a, User b){
         // Email address
-        if (!a.email.equals(b.email))
+        if (!a.getEmail().equals(b.getEmail()))
             return false;
 
         // Password
-        if (!a.password.equals(b.password))
+        if (!a.getPassword().equals(b.getPassword()))
             return false;
 
         // Contacts
-        if (a.contacts.size() != b.contacts.size())
+        if (a.getContacts().size() != b.getContacts().size())
             return  false;
 
-        for (User aContact : a.contacts){
-            for (User bContact : b.contacts){
+        for (User aContact : a.getContacts()){
+            for (User bContact : b.getContacts()){
                 if (!userEquals(aContact, bContact))
                     return false;
             }
         }
 
         // Mails
-        if (a.mails.size() != b.mails.size())
+        if (a.getMails().size() != b.getMails().size())
             return  false;
 
-        for (Mail aMail : a.mails){
-            for (Mail bMail : b.mails){
+        for (Mail aMail : a.getMails()){
+            for (Mail bMail : b.getMails()){
                 if (!mailEquals(aMail, aMail))
                     return false;
             }
@@ -109,24 +109,21 @@ public class StorageManagerTest {
     }
 
     boolean mailEquals(Mail a, Mail b){
-        if (!a.sender.equals(b.sender))
+        if (!a.getSender().equals(b.getSender()))
             return false;
-        if (!a.subject.equals(b.subject))
+        if (!a.getSubject().equals(b.getSubject()))
             return false;
-        if (!a.date.equals(b.date))
+        if (!a.getDate().equals(b.getDate()))
             return false;
-        if (!a.priority.equals(b.priority))
+        if (!a.getPriority().equals(b.getPriority()))
             return false;
-        if (!a.status.equals(b.status))
+        if (!a.getStatus().equals(b.getStatus()))
             return false;
-        if (!a.attachments.equals(b.attachments))
+        if (!a.getAttachments().equals(b.getAttachments()))
             return false;
-        if (!a.ID.equals(b.ID))
+        if (!a.getID().equals(b.getID()))
             return false;
-        if (!a.bodyText.equals(b.bodyText))
-            return false;
-
-        return true;
+        return a.getBodyText().equals(b.getBodyText());
     }
 
 }

@@ -19,11 +19,11 @@ class UserTest {
         assertTrue(auth.signUp("someZc@ok.com","some"));
         User user1 = new User("someZc@ok.com","some");
         User user2 = new User("someZc@ok.com","some");
-        user1.folders.get("inbox").add( "1" );
-        user2.folders.get("inbox").add( "1" );
-        user1.folders.get("inbox").add( "123123" );
+        user1.getFolders().get("inbox").add( "1" );
+        user2.getFolders().get("inbox").add( "1" );
+        user1.getFolders().get("inbox").add( "123123" );
         assertFalse(user1.equals(user2));
-        user2.folders.get("inbox").add( "123123" );
+        user2.getFolders().get("inbox").add( "123123" );
         assertTrue(user1.equals(user2));
 
         StorageManager.storeUser(user1);
