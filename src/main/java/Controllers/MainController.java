@@ -156,9 +156,9 @@ public class MainController {
         return u;
     }
 
-    
+
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@RequestParam String mailID, @RequestParam String attachmentName) throws Exception{
+    public ResponseEntity<Resource> download(@CookieValue(value = "email")String email, @RequestParam String mailID, @RequestParam String attachmentName) throws Exception{
 
         File file = new File(App.mailsFolderPath +  File.separator + mailID + File.separator + attachmentName);
         Path path = Paths.get(file.getAbsolutePath());
