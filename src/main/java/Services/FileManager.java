@@ -116,7 +116,6 @@ public class FileManager {
 	public static Object getJSONObj(String filePath, Integer type){
 		//JSON parser object to parse read file
 		//JSONParser jsonParser = new JSONParser();
-
 		try
 		{
 			FileReader reader = new FileReader(filePath + ".json");

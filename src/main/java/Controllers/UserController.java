@@ -15,7 +15,6 @@ import java.util.HashMap;
 @RestController
 @CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class UserController {
-    //TODO: remove default value
 
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,

@@ -18,6 +18,7 @@ public class Mail implements Serializable {
 
     public static final long serialVersionUID = 3347324734166375499L;
     private String sender;
+    private ArrayList<String> recievers;
     private String subject;
     private Date date;
     private Integer priority;
@@ -35,6 +36,7 @@ public class Mail implements Serializable {
         status = "unread";
         bodyText = "";
         attachments =new ArrayList<String>();
+        recievers = new ArrayList<String>();
     }
 
     

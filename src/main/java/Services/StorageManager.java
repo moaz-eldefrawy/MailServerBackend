@@ -69,7 +69,7 @@ public class StorageManager {
         folder.add(mailID);
         System.out.println(user.getFolders().get(folderName).get(0));
         StorageManager.storeUser(user);
-        return  true;
+        return true;
     }
 
     public static boolean removeMailFromFolder(String mailID, String folderName, String email){
@@ -99,7 +99,7 @@ public class StorageManager {
     }
 
 
-    // TODO: storage manager doesn't authenticate if user has the mail
+    // TODO: storage manager doesn't authenticate if user has the mail (aka fksan)
     public static Mail getUserMailById(String userEmail, String id, String folderName){
         if(id == null)
             return null;

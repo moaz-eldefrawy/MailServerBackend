@@ -4,7 +4,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,7 +25,7 @@ public class StorageManagerTest {
     File dummyFile = new File(dummyFilepath);
 
     @Test
-    public void test() throws IOException {
+    public void mailQueries() throws IOException {
         new App();
         //User write read
         String email = "shaka@adel.com", password = "password";
@@ -48,7 +50,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void folderOperations() throws IOException {
+    public void mailFolderOperations() throws IOException {
         Authentication.getInstance().signUp("some2@gmail.com","some2");
         User user1 = new User("some2@gmail.com","some");
         User user2 = new User("some2@gmail.com","some");
@@ -72,6 +74,50 @@ public class StorageManagerTest {
         StorageManager.removeMailFromFolder(mail1.getID(),"inbox","some2@gmail.com");
         user1 = StorageManager.retrieveUser("some2@gmail.com");
         assertTrue(user2.equals(StorageManager.retrieveUser("some2@gmail.com")));
+    }
+
+    @Test
+    public void rename_add_remove_folders(){
+        final String userEmail = "random1234@ok.com";
+
+        FileManager.deleteDir(new File(App.usersFolderPath+File.separator+userEmail+".json"));
+        assertTrue(Authentication.getInstance().signUp(userEmail, "enter123"));
+
+
+        User user = StorageManager.retrieveUser(userEmail);
+        user.getFolders().put("temp5", new ArrayList<>());
+        user.getFolders().put("temp6", new ArrayList<>());
+        StorageManager.addFolder( StorageManager.retrieveUser(userEmail) , "temp5" );
+        StorageManager.addFolder( StorageManager.retrieveUser(userEmail) , "temp5" );
+        StorageManager.addFolder( StorageManager.retrieveUser(userEmail) , "temp5" );
+        StorageManager.addFolder( StorageManager.retrieveUser(userEmail) , "temp6" );
+        assertTrue(user.equals(StorageManager.retrieveUser(userEmail)));
+
+        user.getFolders().remove("temp5");
+        StorageManager.removeFolder( StorageManager.retrieveUser(userEmail) , "temp5" );
+        assertTrue(user.equals(StorageManager.retrieveUser(userEmail)));
+
+
+        //user.getFolders().remove("temp5");
+        StorageManager.removeFolder( StorageManager.retrieveUser(userEmail) , "temp5" );
+        assertTrue(user.equals(StorageManager.retrieveUser(userEmail)));
+
+
+        StorageManager.removeFolder( StorageManager.retrieveUser(userEmail) , "inbox" );
+        assertTrue(user.equals(StorageManager.retrieveUser(userEmail)));
+
+        String id = UUID.randomUUID().toString();
+        Mail mail1 =  new Mail("sender@mail12.com", "Subject 2 ysta", new Date(System.currentTimeMillis()), 4);
+        mail1.addAttachment("attachment1");
+        StorageManager.storeMail(mail1);
+        mail1 = StorageManager.getMail(mail1.getID());
+        StorageManager.addMailToFolder(mail1.getID(),"temp6", userEmail);
+        StorageManager.renameFolder( StorageManager.retrieveUser(userEmail), "temp6", "newName" );
+        user.getFolders().remove("temp6");
+        user.getFolders().put("newName", new ArrayList<String>());
+        user.getFolders().get("newName").add(mail1.getID());
+        assertTrue(user.equals(StorageManager.retrieveUser(userEmail)));
+
     }
     
     boolean userEquals(User a, User b){

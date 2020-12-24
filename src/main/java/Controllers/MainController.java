@@ -33,7 +33,6 @@ public class MainController {
     private ObjectMapper m = new ObjectMapper();
 
 
-
     @PostMapping(path = "/signup")
     public String signUp(@RequestBody String body, HttpServletResponse response) {
         JSONObject json = new JSONObject(body);
@@ -151,14 +150,6 @@ public class MainController {
     public User testF(){
         User u = StorageManager.retrieveUser("eren@attack.titan");
         return u;
-    }
-
-
-
-    @PostMapping(
-            path = "/test5", consumes = "application/x-www-form-urlencoded")
-    public User createPerson(Car person) {
-        return StorageManager.retrieveUser("some2");
     }
 
     
