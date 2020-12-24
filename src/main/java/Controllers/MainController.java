@@ -82,6 +82,12 @@ public class MainController {
         //return "ok";
     }
 
+    @GetMapping(value = "/folders/{folderName}")
+    public Mail getDraft(@CookieValue(value = "email") String email,
+    @PathVariable String folderName, @RequestParam(name = "emailId")String emailId){
+        return StorageManager.getUserMailById(email, emailId, folderName);
+    }
+
     @GetMapping(value  = "/test")
     public User testF(){
         User u = StorageManager.retrieveUser("eren@attack.titan");

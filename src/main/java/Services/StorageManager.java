@@ -97,6 +97,17 @@ public class StorageManager {
         return getUserMails( StorageManager.retrieveUser(email), folderName );
     }
 
+    public static Mail getUserMailById(String userEmail, String id, String folderName){
+        User user =  StorageManager.retrieveUser(userEmail);
+        ArrayList<String> folder = user.getFolders().get(folderName);
+
+        for (int i = 0; i < folder.size(); i++) {
+            if(id.equals(folder.get(i)))
+                return StorageManager.getMail(id);
+        }
+        return null;
+    }
+
     public static ArrayList<Mail> getUserMails(User user, String folderName) {
         ArrayList<String> folder = user.getFolders().get(folderName);
         ArrayList<Mail> mails = new ArrayList<Mail>();
