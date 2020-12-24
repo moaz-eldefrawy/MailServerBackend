@@ -7,6 +7,7 @@ import Services.StorageManager;
 import Services.User;
 
 import org.json.JSONObject;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @RestController
@@ -154,6 +158,23 @@ public class MainController {
 
     
     @GetMapping("/download")
+    public ResponseEntity<Resource> download(@RequestParam String mailID, @RequestParam String attachmentName) throws Exception{
+
+        File file = new File(App.mailsFolderPath +  File.separator + mailID + File.separator + attachmentName);
+        Path path = Paths.get(file.getAbsolutePath());
+
+        String contentType = Files.probeContentType(path);
+
+        ByteArrayResource resource = null;
+        resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
+    }
+
+   /* @GetMapping("/download")
     public ResponseEntity<Resource> downloadAttachment(@CookieValue(value = "email")String email,
         @RequestParam(name = "emailId") String emailId, @RequestParam(name = "fileName") String fileName){
         // TODO: Auth
@@ -177,6 +198,19 @@ public class MainController {
             return null;
         }
     }
+
+
+    @PostMapping("/")
+    public void handleFileUpload(@RequestParam("attachments") MultipartFile[] attachments, @RequestParam String mailID) throws IOException {
+        String mailFolder = App.mailsFolderPath + File.separator + mailID;
+        for (MultipartFile mpfile : attachments){
+            System.out.println(mpfile.getOriginalFilename());
+            File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
+            file.createNewFile();
+            mpfile.transferTo(file);
+        }
+    }
+    */
 
 
 
