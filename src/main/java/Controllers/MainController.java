@@ -82,7 +82,10 @@ public class MainController {
 
     @PostMapping(value = "/saveDraft")
     public ResponseEntity<String> saveDraft(@CookieValue(value = "email") String userEmail, 
-    @RequestParam(value = "files", required = false) MultipartFile[] files, @RequestParam(value = "mail") String jsonMail) {
+    @RequestParam(value = "files", required = false) MultipartFile[] files,
+    @RequestParam(value = "mail") String jsonMail,
+    @RequestParam(value = "compose") Boolean isCompose,
+    @RequestParam(value = "receivers")String[] receivers) {
         
         try{
             Mail newDraft = m.readValue(jsonMail, Mail.class);
@@ -122,10 +125,23 @@ public class MainController {
                 }
             
             }
-        
+            System.out.println(isCompose);
+            if(isCompose) {
+                StorageManager.addMailToFolder(newDraft.getID(), "sent", newDraft.getSender());
+                StorageManager.removeMailFromFolder(newDraft.getID(), "drafts", newDraft.getSender());
+                System.out.println(newDraft.getSender());
+                for (String rec : receivers) {
+                    if (auth.userExists(rec)) {
+                        StorageManager.addMailToFolder(newDraft.getID(), "inbox", rec);
+                        System.out.println(rec);
+                    }
+                }    
+    
+            }
 
             return new ResponseEntity<String>(newDraft.getID(), HttpStatus.OK);
         }catch(Exception e){
+            e.printStackTrace();
             return new ResponseEntity<>(e.toString(), HttpStatus.OK);
         }
     }
@@ -147,7 +163,7 @@ public class MainController {
             Mail mail = m.readValue(jsonMail, Mail.class);
 
             if (!mail.getSender().equals(email)) {
-                return new ResponseEntity<String>("kolo sharafanta7", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<String>("unauthorised access", HttpStatus.BAD_REQUEST);
             }
 
             String mailFolder = App.mailsFolderPath + File.separator + mail.getID();

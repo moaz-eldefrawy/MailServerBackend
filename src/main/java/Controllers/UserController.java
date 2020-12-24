@@ -20,7 +20,7 @@ public class UserController {
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
                                      @PathVariable String folderName) {
-        System.out.println(email);
+        System.out.println("User fetch: " + folderName);
         return StorageManager.getUserMails(email, folderName);
         //return "ok";
     }
