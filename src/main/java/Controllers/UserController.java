@@ -81,4 +81,15 @@ public class UserController {
 
         return StorageManager.renameFolder(user, oldFolder, newFolder);
     }
+
+    @PostMapping("/changePassword")
+    public static boolean changePassword(@RequestBody String body, @CookieValue(value = "email") String email){
+        JSONObject json = new JSONObject(body);
+
+        String oldPassword = json.getString("oldPassword");
+        String newPassword = json.getString("newPassword");
+        User user = StorageManager.retrieveUser(email);
+
+        return StorageManager.changePassword(user, oldPassword, newPassword);
+    }
 }

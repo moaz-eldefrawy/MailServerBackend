@@ -164,11 +164,20 @@ public class StorageManager {
         return true;
     }
 
+    public static boolean changePassword(User user, String oldPassword, String newPassword){
+        if(!user.getPassword().equals(oldPassword))
+            return false;
+
+        user.setPassword(newPassword);
+        StorageManager.storeUser(user);
+        return true;
+    }
 
     public static boolean mailExists(String mailId){
         File file = new File(App.mailsFolderPath + File.separator + mailId);
         return file.exists();
     }
+
 
 
 }
