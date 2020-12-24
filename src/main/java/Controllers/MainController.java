@@ -7,7 +7,11 @@ import Services.StorageManager;
 import Services.User;
 
 import org.json.JSONObject;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,10 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class MainController {
 
     private Authentication auth = Authentication.getInstance();
@@ -36,14 +41,15 @@ public class MainController {
         String password = json.getString("password");
 
         if(auth.signUp(email, password)) {
-            String authString = "email=" + email + ";" + "Max-Age=99999999999999";
-            response.addHeader("Set-Cookie", authString);
+            Cookie cookie = new Cookie("email", email);
+            cookie.setMaxAge(999999999);
+            response.addCookie(cookie);
             return "{\"user\": \""+email+"\"}";
         }
         else
             return "kolo sharafanta7";
     }
-
+    
     @PostMapping(path = "/signin")
     public String signIn(@RequestBody String body, HttpServletResponse response) {
         JSONObject json = new JSONObject(body);
@@ -55,18 +61,22 @@ public class MainController {
 
         if (user == null || !user.getPassword().equals(password)) {
             response.setStatus(401);
+            return "error";
         } else {
-            String authString = "email=" + email + ";" + "Max-Age=99999999999999";
-            response.addHeader("Set-Cookie", authString);
+            Cookie cookie = new Cookie("email", email);
+            cookie.setMaxAge(999999999);
+            response.addCookie(cookie);
+            System.out.println(cookie.toString());
+            return "{\"user\": \""+email+"\"}";
         }
-        return "{\"user\": \""+email+"\"}";
+        
     }
 
     //TODO: remove default value
 
-    @GetMapping(value = "/inbox")
-    public ArrayList<Mail> listMails(@CookieValue(value = "email", defaultValue = "shaka@adel.com") String email,
-                                     @RequestParam(value = "folderName", defaultValue = "inbox") String folderName) {
+    @GetMapping(value = "/folders/{folderName}")
+    public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
+                                     @PathVariable String folderName) {
         System.out.println(email);
         return StorageManager.getUserMails(email, folderName);
         //return "ok";
@@ -80,21 +90,21 @@ public class MainController {
 
 
     @PostMapping(value = "/compose")
-    public ResponseEntity<String> compose(/*@CookieValue(value = "email", defaultValue = "shaka@adel.com") String email,*/ 
+    public ResponseEntity<String> compose(@CookieValue(value = "email") String email, 
     @RequestParam(value = "files", required = false) MultipartFile[] files, @RequestParam(value = "mail") String jsonMail,
     @RequestParam(value = "receivers") String[] receivers) {
-        /*
-        // TODO: handle in-valid sender
-        if (!mail.sender.equals(email)) {
-            return false;
-        }*/
-
+        
         try{
             Mail mail = m.readValue(jsonMail, Mail.class);
+
+            if (!mail.getSender().equals(email)) {
+                return new ResponseEntity<String>("kolo sharafanta7", HttpStatus.BAD_REQUEST);
+            }
+
             String mailFolder = App.mailsFolderPath + File.separator + mail.getID();
             if(files != null)
                 for(MultipartFile mpfile: files)
-                    mail.addAttachment(mailFolder + File.separator + mpfile.getOriginalFilename());
+                    mail.addAttachment(mpfile.getOriginalFilename());
             StorageManager.storeMail(mail);
             StorageManager.addMailToFolder(mail.getID(), "sent", mail.getSender());
 
@@ -138,6 +148,32 @@ public class MainController {
         return;
     }
     */
+    
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadAttachment(@CookieValue(value = "email")String email,
+        @RequestParam(name = "emailId") String emailId, @RequestParam(name = "fileName") String fileName){
+        // TODO: Auth
+        System.out.println("download: " + email);
+        try
+        {
+            String attachmentDir = App.mailsFolderPath + File.separator + emailId;
+            File attachmentFile = new File(attachmentDir, fileName);
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(attachmentFile));
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", attachmentFile.getName()));
+            headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+            headers.add("Pragma", "no-cache");
+            headers.add("Expires", "0");
+
+            ResponseEntity<Resource> responseEntity = ResponseEntity.ok().headers(headers).contentLength(attachmentFile.length())
+            .contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
+
+            return responseEntity;
+        }catch(Exception e){
+            return null;
+        }
+    }
+
 
     @PutMapping("/copy")
     public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {

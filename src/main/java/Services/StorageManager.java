@@ -45,7 +45,7 @@ public class StorageManager {
         File mailFolder = new File(mailPath);
         mailFolder.mkdirs();
 
-        FileManager.writeToJSONFile(mail.toJSON(), mailPath + File.separator + "mail");
+        FileManager.writeToJSONFile(mail, mailPath + File.separator + "mail");
     }
 
     public static Mail getMail(UUID ID){

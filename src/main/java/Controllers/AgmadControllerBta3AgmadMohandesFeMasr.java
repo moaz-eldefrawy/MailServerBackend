@@ -25,7 +25,7 @@ public class AgmadControllerBta3AgmadMohandesFeMasr {
         return paramMap.get("name") + " " + paramMap.get("shape");
     }*/
 
-    @GetMapping("/download")
+    @GetMapping("/downloadd")
     public ResponseEntity<Resource> download(@RequestParam String mailID, @RequestParam String attachmentName) throws Exception{
 
         File file = new File(App.mailsFolderPath +  File.separator + mailID + File.separator + attachmentName);

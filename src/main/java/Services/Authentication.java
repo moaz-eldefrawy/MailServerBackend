@@ -41,7 +41,7 @@ public class Authentication {
 
 		User user = StorageManager.retrieveUser(email);
 		/// TODO: Check if password matches after hashing
-		if(user.password.equals(password))
+		if(user.getPassword().equals(password))
 			return user;
 
 		return null;
