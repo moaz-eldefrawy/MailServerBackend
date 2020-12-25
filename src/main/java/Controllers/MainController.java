@@ -88,7 +88,7 @@ public class MainController {
     @RequestParam(value = "files", required = false) MultipartFile[] files,
     @RequestParam(value = "mail") String jsonMail,
     @RequestParam(value = "compose") Boolean isCompose,
-    @RequestParam(value = "receivers")String[] receivers) {
+    @RequestParam(value = "receivers", required = false)String[] receivers) {
         
         try{
             System.out.println(isCompose);
