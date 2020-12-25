@@ -13,15 +13,14 @@ public class Sort {
      */
     public static void priority(ArrayList<Mail> mails) {
        if (mails.size() == 0)
-            throw new RuntimeException();
-
+            return;//throw new RuntimeException();
         PriorityQueue q = new PriorityQueue();
         for (int i = 0; i < mails.size(); i++) {
 
             Mail mail = mails.get(i);
-            //	System.out.println(mail.getPriority());
+            	System.out.println("KEY: " + mail.getPriority());
             //		System.out.println(mail.getSubject());
-
+            
             q.insert(mail, mail.getPriority());
         }
         mails.clear();

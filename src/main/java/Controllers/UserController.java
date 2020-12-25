@@ -24,6 +24,7 @@ public class UserController {
 
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
+<<<<<<< HEAD
                                      @PathVariable String folderName,
                                      @RequestParam(name = "sortType", defaultValue = "default") String sortType,
                                      @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -31,14 +32,24 @@ public class UserController {
                                      @RequestParam(name = "filterValue") String filterValue) {
 
         AbstractFilter filter = FilterFactory.getFilter(filterType);
+=======
+                        @PathVariable String folderName,
+                        @RequestParam(name = "sortType", defaultValue = "date") String sortType,
+                        @RequestParam(name = "page", defaultValue = "1") Integer page) {
+
+
+>>>>>>> c825cd05edd8fcd943d5f8a52e204160d44ef98b
 
         ArrayList<Mail> mails = StorageManager.getUserMails(email, folderName);
         //return mails;
         //sorts in place
         StorageManager.sortMails(mails, sortType);
+<<<<<<< HEAD
         if(filter != null){
             mails = filter.meetCriteria(mails, filterValue);
         }
+=======
+>>>>>>> c825cd05edd8fcd943d5f8a52e204160d44ef98b
         return StorageManager.getPage(mails, page);
         //return "ok";
     }

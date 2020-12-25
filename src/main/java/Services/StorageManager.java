@@ -142,7 +142,9 @@ public class StorageManager {
     final static Integer mailsPerPage = 10;
     public static ArrayList<Mail> getPage (ArrayList<Mail> mails, int pageNumber){
         pageNumber--;
-        return new ArrayList<Mail>(mails.subList(pageNumber * mailsPerPage, pageNumber * (mailsPerPage + 1)));
+        if(pageNumber*10 >= mails.size())
+            return null;
+        return new ArrayList<Mail>(mails.subList(pageNumber * 10, Math.min(mails.size(), pageNumber * 10 + 10)));
     }
 
     public static boolean removeFolder(User user, String folderName){
