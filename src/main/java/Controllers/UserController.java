@@ -47,7 +47,7 @@ public class UserController {
 
     @PutMapping("/updateContacts")
     public void updateContacts(@CookieValue(value = "email") String email,
-                                  @RequestParam(value = "contacts") String contactsString) throws JsonProcessingException {
+                                  @RequestBody String contactsString) throws JsonProcessingException {
         ObjectMapper objMapper = new ObjectMapper();
         HashMap<String, String> map = objMapper.readValue(contactsString, HashMap.class);
         User user = StorageManager.retrieveUser(email);
