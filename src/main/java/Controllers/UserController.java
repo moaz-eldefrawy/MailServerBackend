@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -24,10 +25,10 @@ public class UserController {
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
                                      @PathVariable String folderName,
-                                     @RequestParam(name = "sortType", defaultValue = "default") String sortType,
+                                     @RequestParam(name = "sortType", defaultValue = "date") String sortType,
                                      @RequestParam(name = "page", defaultValue = "1") Integer page,
-                                     @RequestParam(name = "filterType", defaultValue = "") String filterType,
-                                     @RequestParam(name = "filterValue", defaultValue = "") String filterValue) {
+                                     @RequestParam(name = "filterType", required = false) String filterType,
+                                     @RequestParam(name = "filterValue", required = false) String filterValue) {
 
 
         System.out.println(sortType);
@@ -36,10 +37,11 @@ public class UserController {
         //sorts in place
         StorageManager.sortMails(mails, sortType);
         System.out.println(mails.size());
-        //filter
-        AbstractFilter filter = FilterFactory.getFilter(filterType);
-        if(filter != null){
-            mails = filter.meetCriteria(mails, filterValue);
+        if(filterType != null && filterValue != null) {
+            AbstractFilter filter = FilterFactory.getFilter(filterType);
+            if(filter != null){
+                mails = filter.meetCriteria(mails, filterValue);
+            }
         }
         return StorageManager.getPage(mails, page);
     }
@@ -66,7 +68,7 @@ public class UserController {
     public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
         JSONObject json = new JSONObject(body);
         String id = json.getString("id");
-        String folder = json.getString("folder");
+        String folder = json.getString("to");
         return StorageManager.addMailToFolder(id, folder, email);
     }
 
@@ -74,8 +76,8 @@ public class UserController {
     public static boolean MoveMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
         JSONObject json = new JSONObject(body);
         String id = (String) json.getString("id");
-        String folderOrigin = json.getString("folderOrigin");
-        String folderDest = json.getString("folderDest");
+        String folderOrigin = json.getString("from");
+        String folderDest = json.getString("to");
         return StorageManager.MoveMailToFolder(id, folderOrigin, folderDest, email);
     }
 
@@ -84,7 +86,7 @@ public class UserController {
         JSONObject json = new JSONObject(body);
         String id = (String) json.getString("id");
         String folder = json.getString("folder");
-        return StorageManager.removeMailFromFolder(id, folder, email);
+        return StorageManager.MoveMailToTrash(id, folder, email);
     }
 
 
@@ -103,6 +105,61 @@ public class UserController {
 
         return StorageManager.removeFolder(user, folder.toLowerCase());
     }
+
+    @DeleteMapping("/removeMultipleMails/{folderName}")
+    public static String removeMultipleMails(@RequestBody(required = false) ArrayList<String> emailIDArray,
+                                            @PathVariable String folderName,
+                                            @CookieValue(value = "email") String email)
+    {
+
+        if(emailIDArray == null || emailIDArray.size() == 0)
+            return "no emails to be deleted";
+        
+        for(String id: emailIDArray) {
+            StorageManager.MoveMailToTrash(id, folderName, email);
+        }
+        return "emails deleted successfully";
+    }
+
+    @PostMapping("/copyMultipleMails")
+    public static String copyMultipleMails(@RequestBody String body,
+                                            @CookieValue(value = "email") String email)
+    {
+        JSONObject json = new JSONObject(body);
+        List<Object> emailIDArray = json.getJSONArray("array").toList();
+        String from = json.getString("from");
+        String to = json.getString("to");
+        if(emailIDArray == null || emailIDArray.size() == 0 || from == null || to == null)
+            return "an error occurred";
+        System.out.println(from);
+        System.out.println(to);
+        for(Object id: emailIDArray) {
+            StorageManager.CopyMailToFolder(id.toString(), to, email);
+        }
+        return "emails copied successfully";
+    }
+
+
+    @PostMapping("/moveMultipleMails")
+    public static String moveMultipleMails(@RequestBody String body,
+                                            @CookieValue(value = "email") String email)
+    {
+        JSONObject json = new JSONObject(body);
+        List<Object> emailIDArray = json.getJSONArray("array").toList();
+        String from = json.getString("from");
+        String to = json.getString("to");
+        if(emailIDArray == null || emailIDArray.size() == 0 || from == null || to == null)
+            return "an error occurred";
+        System.out.println(from);
+        System.out.println(to);
+        for(Object id: emailIDArray) {
+            StorageManager.MoveMailToFolder(id.toString(), from, to, email);
+        }
+        return "emails moved successfully";
+    }
+
+
+
 
     @PostMapping("/addFolder")
     public static boolean addFolder(@RequestBody String body, @CookieValue(value = "email") String email){

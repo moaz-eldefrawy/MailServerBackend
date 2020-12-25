@@ -38,6 +38,8 @@ public class Authentication {
 			return null;
 
 		User user = StorageManager.retrieveUser(email);
+		if(user == null)
+			return null;
 		/// TODO: Check if password matches after hashing
 		if(user.getPassword().equals(password))
 			return user;

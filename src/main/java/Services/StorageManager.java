@@ -3,6 +3,8 @@ package Services;
 import java.io.File;
 import java.util.*;
 
+import org.yaml.snakeyaml.events.Event.ID;
+
 
 /*
 
@@ -81,7 +83,12 @@ public class StorageManager {
         user.getFolders().get(folderName).remove(mailID);
         StorageManager.storeUser(user);
         return true;
+    }
 
+    public static boolean MoveMailToTrash(String ID, String folderOrigin, String email) {
+        if(folderOrigin.equals("trash"))
+            return removeMailFromFolder(ID, "trash", email);
+        return StorageManager.MoveMailToFolder(ID, folderOrigin, "trash", email);
     }
 
     // NOTE: will remove even if it one the destination folder doesn't exist
@@ -91,6 +98,13 @@ public class StorageManager {
         return removeMailFromFolder(ID, folderOrigin, email) &&
          addMailToFolder(ID, folderDest, email);
     }
+
+    public static boolean CopyMailToFolder(String ID, String folderDest, String email){
+        if(!mailExists(ID))
+            return false;
+        return addMailToFolder(ID, folderDest, email);
+    }
+
 
     public static ArrayList<Mail> getUserMails(String email, String folderName){
         User user = StorageManager.retrieveUser(email);
