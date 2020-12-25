@@ -19,7 +19,7 @@ import java.util.*;
  * controls requests pertaining to the profile of a single user (name,contacts,folders)
  * */
 @RestController
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:8081"}, allowCredentials = "true")
 public class UserController {
 
     @GetMapping(value = "/folders/{folderName}")
@@ -118,6 +118,13 @@ public class UserController {
 
         if(emailIDArray == null || emailIDArray.size() == 0)
             return "no emails to be deleted";
+
+        System.out.println("Emails to be Deleted");
+        System.out.println(emailIDArray.toString());
+        System.out.println("====================");
+
+        System.out.println("Folder to be Deleted from");
+        System.out.println("====================");
         
         for(String id: emailIDArray) {
             StorageManager.MoveMailToTrash(id, folderName, email);
@@ -138,7 +145,11 @@ public class UserController {
         System.out.println(from);
         System.out.println(to);
         for(Object id: emailIDArray) {
-            StorageManager.CopyMailToFolder(id.toString(), to, email);
+
+            // Create a copy of each mail and store it
+            Mail copy = StorageManager.getMail(id.toString()).clone();
+            StorageManager.storeMail(copy);
+            StorageManager.CopyMailToFolder(copy.getID(), to, email);
         }
         return "emails copied successfully";
     }

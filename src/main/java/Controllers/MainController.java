@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:8081"}, allowCredentials = "true")
 public class MainController {
 
     private Authentication auth = Authentication.getInstance();
@@ -62,6 +62,8 @@ public class MainController {
         System.out.println("email: "+email);
         System.out.println("password: "+password);
         User user = auth.signIn(email, password);
+
+        System.out.println(user.toString());
 
         if (user == null || !user.getPassword().equals(password)) {
             response.setStatus(401);

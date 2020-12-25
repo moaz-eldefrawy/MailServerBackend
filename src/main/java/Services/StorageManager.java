@@ -102,6 +102,7 @@ public class StorageManager {
     public static boolean CopyMailToFolder(String ID, String folderDest, String email){
         if(!mailExists(ID))
             return false;
+
         return addMailToFolder(ID, folderDest, email);
     }
 

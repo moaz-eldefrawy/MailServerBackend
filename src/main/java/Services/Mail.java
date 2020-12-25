@@ -18,9 +18,6 @@ public class Mail implements Serializable {
 
     public static final long serialVersionUID = 3347324734166375499L;
     private String sender;
-
-
-
     private ArrayList<String> recievers;
     private String subject;
     private Date date;
@@ -38,6 +35,8 @@ public class Mail implements Serializable {
         date =  new Date(System.currentTimeMillis());
         status = "unread";
         bodyText = "";
+        subject = "";
+        priority = 0;
         attachments =new ArrayList<String>();
         recievers = new ArrayList<String>();
     }
@@ -203,4 +202,17 @@ public class Mail implements Serializable {
     }
 
 
+    public Mail clone(){
+        Mail copy = new Mail();
+
+        copy.setSender(this.sender);
+        copy.setRecievers((ArrayList<String>) this.recievers.clone());
+        copy.setSubject(this.subject);
+        copy.setDate((Date) date.clone());
+        copy.setPriority(Integer.valueOf(this.priority));
+        copy.setStatus(this.status);
+        copy.setAttachments((ArrayList<String>) this.attachments.clone());
+        copy.setBodyText(this.bodyText);
+        return copy;
+    }
 }
