@@ -18,6 +18,9 @@ public class Mail implements Serializable {
 
     public static final long serialVersionUID = 3347324734166375499L;
     private String sender;
+
+
+
     private ArrayList<String> recievers;
     private String subject;
     private Date date;
@@ -167,6 +170,13 @@ public class Mail implements Serializable {
         this.bodyText = bodyText;
     }
 
+    public ArrayList<String> getRecievers() {
+        return recievers;
+    }
+
+    public void setRecievers(ArrayList<String> recievers) {
+        this.recievers = recievers;
+    }
     
     public JSONObject toJSON(){
         JSONObject mailJSON = new JSONObject();
@@ -191,4 +201,6 @@ public class Mail implements Serializable {
 
         return mailJSON;
     }
+
+
 }

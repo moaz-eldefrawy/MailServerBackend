@@ -11,12 +11,12 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String email;
     private String password;
-    private HashMap<String, String> contacts;
+    private ArrayList<Contact> contacts;
     private HashMap<String, ArrayList<String> > folders;
     private ArrayList<Mail> mails;
 
     public User() {
-        this.contacts = new HashMap<String, String>();
+        this.contacts = new ArrayList<>();
         this.folders = new HashMap<String, ArrayList<String>>();
         this.mails = new ArrayList<Mail>();
         this.folders.put("inbox", new ArrayList<String>());
@@ -70,10 +70,10 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public HashMap<String, String> getContacts() {
+    public ArrayList<Contact> getContacts() {
         return contacts;
     }
-    public void setContacts(HashMap<String, String> contacts) {
+    public void setContacts(ArrayList<Contact> contacts) {
         this.contacts = contacts;
     }
 
@@ -129,6 +129,7 @@ public class User implements Serializable {
     }
 
 
+
     public boolean equals(User b){
         // Email address
         if (!this.email.equals(b.email))
@@ -139,17 +140,9 @@ public class User implements Serializable {
             return false;
 
         // Contacts
-        if (this.contacts.size() != b.contacts.size())
+        if (!this.contacts.equals(b.contacts))
             return  false;
 
-
-        // TODO: compare a hasmap not a user class
-        /*for (User aContact : this.contacts){
-            for (User bContact : b.contacts){
-                if (!aContact.equals(bContact))
-                    return false;
-            }
-        }*/
 
         // Mails
         if (this.mails.size() != b.mails.size())

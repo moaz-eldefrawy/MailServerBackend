@@ -1,7 +1,9 @@
 package Controllers;
 
 import Filters.AbstractFilter;
+import Filters.ContactFilter;
 import Filters.FilterFactory;
+import Services.Contact;
 import Services.Mail;
 import Services.StorageManager;
 import Services.User;
@@ -10,9 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -40,27 +40,34 @@ public class UserController {
         if(filterType != null && filterValue != null) {
             AbstractFilter filter = FilterFactory.getFilter(filterType);
             if(filter != null){
-                mails = filter.meetCriteria(mails, filterValue);
+                mails = filter.filter(mails, filterValue);
             }
         }
         return StorageManager.getPage(mails, page);
     }
 
     @PutMapping("/updateContacts")
-    public void updateContacts(@CookieValue(value = "email") String email,
-                                  @RequestBody String contactsString) throws JsonProcessingException {
-        ObjectMapper objMapper = new ObjectMapper();
-        HashMap<String, String> map = objMapper.readValue(contactsString, HashMap.class);
+    public static void updateContacts(@CookieValue(value = "email") String email,
+                                  @RequestBody ArrayList<Contact> contactsArrayList) throws JsonProcessingException {
         User user = StorageManager.retrieveUser(email);
-        user.setContacts(map);
+        user.setContacts(contactsArrayList);
+
+        Collections.sort(user.getContacts(), new Comparator<Contact>() {
+            public int compare(Contact c1, Contact c2) {
+                return c1.getName().compareTo(c2.getName());
+            }
+        });
         StorageManager.storeUser(user);
         return ;
     }
 
+
     @GetMapping("/getContacts")
-    public HashMap<String,String> updateContacts(@CookieValue(value = "email") String email) throws JsonProcessingException {
+    public static ArrayList<Contact> getContacts(@CookieValue(value = "email") String email,
+                                                 @RequestParam(name = "searchString", defaultValue = "") String searchString) throws JsonProcessingException {
         User user = StorageManager.retrieveUser(email);
-        return user.getContacts();
+        System.out.println(searchString);
+        return ContactFilter.filter(user.getContacts(), searchString);
     }
 
 

@@ -1,10 +1,7 @@
 package Services;
 
-import Controllers.MainController;
 import Filters.*;
 
-import javax.annotation.Priority;
-import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -77,7 +74,7 @@ public class Main {
         mails.add(mail1);
         mails.add(mail2);
         mails.add(mail3);
-        mails = s.meetCriteria(mails, "2020-10-10");
+        mails = s.filter(mails, "2020-10-10");
         Main.printMails(mails);
         //Sort.priority(mails);
         //Main.printMails(mails);
