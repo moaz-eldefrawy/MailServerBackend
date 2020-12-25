@@ -19,23 +19,17 @@ public class UserController {
 
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
-                                     @PathVariable String folderName,
-                                     @RequestBody String body) {
+                        @PathVariable String folderName,
+                        @RequestParam(name = "sortType", defaultValue = "date") String sortType,
+                        @RequestParam(name = "page", defaultValue = "1") Integer page) {
 
-        JSONObject json = new JSONObject(body);
 
-        // date ("default"), subject, sender, body, priority
-        String sortType = json.getString("sortType");
-
-        // 1 - based index
-        Integer pageNumber = json.getInt("page");
 
         ArrayList<Mail> mails = StorageManager.getUserMails(email, folderName);
-
+        //return mails;
         //sorts in place
         StorageManager.sortMails(mails, sortType);
-
-        return StorageManager.getPage(mails, pageNumber);
+        return StorageManager.getPage(mails, page);
         //return "ok";
     }
 

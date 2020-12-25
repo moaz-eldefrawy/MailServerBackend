@@ -21,7 +21,7 @@ class PriorityQueue implements  Serializable {
 
 	public void insert(Object item, int key) {
 
-		if (key <= 0) {
+		if (key < 0) {
 			throw new RuntimeException("Invalid key");
 		}
 
