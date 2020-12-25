@@ -13,12 +13,7 @@ public class Sort {
      */
     public static void priority(ArrayList<Mail> mails) {
        if (mails.size() == 0)
-<<<<<<< HEAD
             return;//throw new RuntimeException();
-=======
-            throw new RuntimeException();
-
->>>>>>> fdd9430010cc41ff8c3a55234923f7a519d3b3f3
         PriorityQueue q = new PriorityQueue();
         for (int i = 0; i < mails.size(); i++) {
 
