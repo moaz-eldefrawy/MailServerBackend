@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * controls requests pertaining to the profile of a single user (name,contacts,folders)
@@ -77,7 +78,7 @@ public class UserController {
         String folder = json.getString("folder");
         User user = StorageManager.retrieveUser(email);
 
-        return StorageManager.removeFolder(user, folder);
+        return StorageManager.removeFolder(user, folder.toLowerCase());
     }
 
     @PostMapping("/addFolder")
@@ -87,7 +88,7 @@ public class UserController {
         String folder = json.getString("folder");
         User user = StorageManager.retrieveUser(email);
 
-        return StorageManager.addFolder(user, folder);
+        return StorageManager.addFolder(user, folder.toLowerCase());
     }
 
     @PostMapping("/renameFolder")
@@ -98,7 +99,7 @@ public class UserController {
         String newFolder = json.getString("newFolder");
         User user = StorageManager.retrieveUser(email);
 
-        return StorageManager.renameFolder(user, oldFolder, newFolder);
+        return StorageManager.renameFolder(user, oldFolder.toLowerCase(), newFolder.toLowerCase());
     }
 
     @PostMapping("/changePassword")
