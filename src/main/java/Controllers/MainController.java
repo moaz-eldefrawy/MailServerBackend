@@ -7,6 +7,7 @@ import Services.StorageManager;
 import Services.User;
 
 import org.json.JSONObject;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @RestController
@@ -31,7 +35,6 @@ public class MainController {
 
     private Authentication auth = Authentication.getInstance();
     private ObjectMapper m = new ObjectMapper();
-
 
 
     @PostMapping(path = "/signup")
@@ -46,6 +49,7 @@ public class MainController {
             response.addCookie(cookie);
             return "{\"user\": \""+email+"\"}";
         }
+
         else
             return "kolo sharafanta7";
     }
@@ -107,6 +111,7 @@ public class MainController {
                     if(fileNames == null || fileNames.size() == 0 || !fileNames.contains(f.getName()))
                         f.delete();
             }
+
             if(files != null)
                 for(MultipartFile mpfile: files)
                     newDraft.addAttachment(mpfile.getOriginalFilename());
@@ -154,15 +159,24 @@ public class MainController {
     }
 
 
+    @GetMapping("/download")
+    public ResponseEntity<Resource> download(@CookieValue(value = "email")String email, @RequestParam String mailID, @RequestParam String attachmentName) throws Exception{
 
-    @PostMapping(
-            path = "/test5", consumes = "application/x-www-form-urlencoded")
-    public User createPerson(Car person) {
-        return StorageManager.retrieveUser("some2");
+        File file = new File(App.mailsFolderPath +  File.separator + mailID + File.separator + attachmentName);
+        Path path = Paths.get(file.getAbsolutePath());
+
+        String contentType = Files.probeContentType(path);
+
+        ByteArrayResource resource = null;
+        resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
     }
 
-    
-    @GetMapping("/download")
+   /* @GetMapping("/download")
     public ResponseEntity<Resource> downloadAttachment(@CookieValue(value = "email")String email,
         @RequestParam(name = "emailId") String emailId, @RequestParam(name = "fileName") String fileName){
         // TODO: Auth
@@ -186,6 +200,19 @@ public class MainController {
             return null;
         }
     }
+
+
+    @PostMapping("/")
+    public void handleFileUpload(@RequestParam("attachments") MultipartFile[] attachments, @RequestParam String mailID) throws IOException {
+        String mailFolder = App.mailsFolderPath + File.separator + mailID;
+        for (MultipartFile mpfile : attachments){
+            System.out.println(mpfile.getOriginalFilename());
+            File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
+            file.createNewFile();
+            mpfile.transferTo(file);
+        }
+    }
+    */
 
 
 

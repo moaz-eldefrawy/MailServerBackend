@@ -49,25 +49,4 @@ public class App implements Serializable {
         //setDefaultViewOptions();
     }
 
-
-    public void sendEmails(Mail mail, Queue emails){
-
-        while(!emails.isEmpty()){
-            String email = (String)emails.peek();
-            if(auth.userExists(email)) {
-                sendEmail(mail, email);
-            }
-            else {
-                // TODO: Handle
-            }
-        }
-
-        return ;
-    }
-
-    public void sendEmail(Mail mail, String email){
-
-    }
-
-
 }

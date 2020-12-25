@@ -1,4 +1,4 @@
-/*
+
 import Services.App;
 import Services.Authentication;
 import Services.FileManager;
@@ -38,4 +38,3 @@ class AuthenticationTest {
 
     }
 }
-*/

@@ -69,7 +69,7 @@ public class StorageManager {
         folder.add(mailID);
         System.out.println(user.getFolders().get(folderName).get(0));
         StorageManager.storeUser(user);
-        return  true;
+        return true;
     }
 
     public static boolean removeMailFromFolder(String mailID, String folderName, String email){
@@ -98,12 +98,15 @@ public class StorageManager {
         return getUserMails( user, folderName );
     }
 
+
+    // TODO: storage manager doesn't authenticate if user has the mail (aka fksan)
     public static Mail getUserMailById(String userEmail, String id, String folderName){
         if(id == null)
             return null;
         User user =  StorageManager.retrieveUser(userEmail);
         ArrayList<String> folder = user.getFolders().get(folderName);
 
+        // TODO: replace with .contains
         for (int i = 0; i < folder.size(); i++) {
             if(id.equals(folder.get(i)))
                 return StorageManager.getMail(id);
@@ -115,7 +118,7 @@ public class StorageManager {
         ArrayList<String> folder = user.getFolders().get(folderName);
         ArrayList<Mail> mails = new ArrayList<Mail>();
         for (int i = 0; i < folder.size(); i++) {
-            System.out.println(folder.get(i));
+            //System.out.println(folder.get(i));
             mails.add(StorageManager.getMail( (String)(folder.get(i))));
         }
         return mails;
@@ -136,11 +139,16 @@ public class StorageManager {
         Sort.iterativeQuickSort(mails, sortType);
     }
 
+    final static Integer mailsPerPage = 10;
     public static ArrayList<Mail> getPage (ArrayList<Mail> mails, int pageNumber){
         pageNumber--;
+<<<<<<< HEAD
         if(pageNumber*10 >= mails.size())
             return null;
         return new ArrayList<Mail>(mails.subList(pageNumber * 10, Math.min(mails.size(), pageNumber * 10 + 10)));
+=======
+        return new ArrayList<Mail>(mails.subList(pageNumber * mailsPerPage, pageNumber * (mailsPerPage + 1)));
+>>>>>>> fdd9430010cc41ff8c3a55234923f7a519d3b3f3
     }
 
     public static boolean removeFolder(User user, String folderName){
