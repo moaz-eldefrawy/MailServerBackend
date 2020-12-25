@@ -49,6 +49,7 @@ public class MainController {
             response.addCookie(cookie);
             return "{\"user\": \""+email+"\"}";
         }
+
         else
             return "kolo sharafanta7";
     }
@@ -110,6 +111,7 @@ public class MainController {
                     if(fileNames == null || fileNames.size() == 0 || !fileNames.contains(f.getName()))
                         f.delete();
             }
+
             if(files != null)
                 for(MultipartFile mpfile: files)
                     newDraft.addAttachment(mpfile.getOriginalFilename());

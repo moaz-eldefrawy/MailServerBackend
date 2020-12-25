@@ -1,8 +1,13 @@
 package Services;
 
 import Controllers.MainController;
+import Filters.*;
 
+import javax.annotation.Priority;
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,7 +16,8 @@ import java.util.UUID;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        //System.out.println(user.password);
+        sortTesting();
+   /*     //System.out.println(user.password);
         HashMap<String, ArrayList<String>> folders = new HashMap<String, ArrayList<String>>();
         folders.put("inbox", new ArrayList<String>());
         UUID ID = UUID.randomUUID();
@@ -23,7 +29,7 @@ public class Main {
         for(int i=0; i<folders.get("inbox").size(); i++){
             System.out.println( folders.get("inbox").get(i) );
         }
-        //MainController a = new MainController();
+        //MainController a = new MainController();*/
     }
 
     public static void sortTesting(){
@@ -39,14 +45,29 @@ public class Main {
 
 
         ArrayList<Mail> mails = new ArrayList<Mail>();
-
-        Mail mail1 = new Mail("ahmed@gmVail.com", "subject3", new Date(),
+        LocalDate k = ((new Date()).toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate());
+        System.out.println("date:");
+        System.out.println(k);
+        System.out.println(k.getDayOfMonth());
+        System.out.println(k.getMonth());
+        System.out.println(k.getYear());
+        System.out.print("\n");
+        Mail mail1 = new Mail("ahmed@gmVail.com", "subject3 subject2", new Date(),
                 3);
+        mail1.setBodyText("one two three");
         Mail mail2=new Mail("basel@gmVail.com", "subject2", new Date(),
                 1 );
-        Mail mail3=new Mail("ziad@gmVail.com", "subject1", new Date(),
+
+        mail2.setBodyText("one four two");
+        Mail mail3=new Mail("ziad@gmVail.com", "subject1", new Date(2018, 11, 25),
                 2 );
 
+
+        mail3.setBodyText("five four two");
+
+        DateFilter s = new DateFilter();
 
        // mail1.date= mail1.date.plusDays(2);
       //  mail2.date= date.now().plusDays(1);
@@ -57,11 +78,12 @@ public class Main {
         mails.add(mail1);
         mails.add(mail2);
         mails.add(mail3);
+        mails = s.meetCriteria(mails, new Date(System.currentTimeMillis()));
         Main.printMails(mails);
-        Sort.priority(mails);
-        Main.printMails(mails);
-        Sort.iterativeQuickSort(mails,"Subject");
-        Main.printMails(mails);
+        //Sort.priority(mails);
+        //Main.printMails(mails);
+        //Sort.iterativeQuickSort(mails,"Subject");
+        //Main.printMails(mails);
         //    Sort.iterativeQuickSort(mails,"Sender");
        // Sort.iterativeQuickSort(mails,"Body");
 

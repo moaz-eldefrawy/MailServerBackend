@@ -14,6 +14,7 @@ public class Sort {
     public static void priority(ArrayList<Mail> mails) {
        if (mails.size() == 0)
             throw new RuntimeException();
+
         PriorityQueue q = new PriorityQueue();
         for (int i = 0; i < mails.size(); i++) {
 

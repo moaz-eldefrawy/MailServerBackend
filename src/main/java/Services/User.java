@@ -164,6 +164,7 @@ public class User implements Serializable {
             }
         }
 
+        //TODO: check this.folders
         try {
             for (Map.Entry<String, ArrayList<String>> entry : this.folders.entrySet()) {
                 String folderName = entry.getKey();
