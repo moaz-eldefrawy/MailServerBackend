@@ -13,7 +13,6 @@ public class AttachmentsFilter extends AbstractFilter{
     @Override
     public boolean passesCriteria(Mail m, Object searchString) {
         for (String attachment : m.getAttachments()){
-            System.out.println(attachment);
             if (attachment.toLowerCase().contains(((String)searchString).toLowerCase()))
                 return true;
         }

@@ -8,7 +8,7 @@ public class FilterFactory {
         }
         type = type.toLowerCase();
         switch(type) {
-            case "attachment":
+            case "attachments":
                 return new AttachmentsFilter();
             case "body":
                 return new BodyFilter();
