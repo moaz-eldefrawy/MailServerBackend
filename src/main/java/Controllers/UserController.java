@@ -81,11 +81,8 @@ public class UserController {
         return StorageManager.MoveMailToFolder(id, folderOrigin, folderDest, email);
     }
 
-    @DeleteMapping("/remove")
-    public static boolean removeMailFromFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
-        JSONObject json = new JSONObject(body);
-        String id = (String) json.getString("id");
-        String folder = json.getString("folder");
+    @DeleteMapping("/remove/{folder}")
+    public static boolean removeMailFromFolder(@RequestBody String id, @PathVariable String folder, @CookieValue(value = "email") String email) {
         return StorageManager.MoveMailToTrash(id, folder, email);
     }
 
@@ -121,7 +118,7 @@ public class UserController {
         return "emails deleted successfully";
     }
 
-    @PostMapping("/copyMultipleMails")
+    @PutMapping("/copyMultipleMails")
     public static String copyMultipleMails(@RequestBody String body,
                                             @CookieValue(value = "email") String email)
     {
@@ -140,7 +137,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/moveMultipleMails")
+    @PutMapping("/moveMultipleMails")
     public static String moveMultipleMails(@RequestBody String body,
                                             @CookieValue(value = "email") String email)
     {
