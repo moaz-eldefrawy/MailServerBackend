@@ -11,12 +11,12 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String email;
     private String password;
-    private ArrayList<User> contacts;
+    private HashMap<String, String> contacts;
     private HashMap<String, ArrayList<String> > folders;
     private ArrayList<Mail> mails;
 
     public User() {
-        this.contacts = new ArrayList<>();
+        this.contacts = new HashMap<String, String>();
         this.folders = new HashMap<String, ArrayList<String>>();
         this.mails = new ArrayList<Mail>();
         this.folders.put("inbox", new ArrayList<String>());
@@ -39,10 +39,6 @@ public class User implements Serializable {
         this.password = (String) obj.get("password");
 
         JSONArray contactsJSON = (JSONArray) obj.get("contacts");
-        this.contacts = new ArrayList<>();
-        for (Object contact : contactsJSON){
-            this.contacts.add(new User((JSONObject) contact));
-        }
         JSONArray mailsJSON = (JSONArray) obj.get("mails");
         this.mails = new ArrayList<>();
         for (Object mail : mailsJSON){
@@ -74,10 +70,10 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public ArrayList<User> getContacts() {
+    public HashMap<String, String> getContacts() {
         return contacts;
     }
-    public void setContacts(ArrayList<User> contacts) {
+    public void setContacts(HashMap<String, String> contacts) {
         this.contacts = contacts;
     }
 
@@ -105,10 +101,10 @@ public class User implements Serializable {
 
         JSONArray contactsJSON = new JSONArray();
 
-        if (contacts != null) {
+       /* if (contacts != null) {
             for (User u : contacts)
                 contactsJSON.put(u.toJSON());
-        }
+        }*/
         userJSON.put("contacts", contactsJSON);
 
         JSONArray mailsJSON = new JSONArray();
@@ -146,12 +142,14 @@ public class User implements Serializable {
         if (this.contacts.size() != b.contacts.size())
             return  false;
 
-        for (User aContact : this.contacts){
+
+        // TODO: compare a hasmap not a user class
+        /*for (User aContact : this.contacts){
             for (User bContact : b.contacts){
                 if (!aContact.equals(bContact))
                     return false;
             }
-        }
+        }*/
 
         // Mails
         if (this.mails.size() != b.mails.size())

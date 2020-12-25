@@ -7,9 +7,7 @@ import java.util.regex.Pattern;
 public class Authentication {
 
 	protected String SystemUsersInfoPath;
-	private Contact contact;
 	boolean matchPass = false;
-	private Contact currentUser;
 	private String email;
 	private String password;
 	private static Authentication instance = new Authentication();

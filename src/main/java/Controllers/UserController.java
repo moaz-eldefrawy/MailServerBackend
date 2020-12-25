@@ -1,14 +1,19 @@
 package Controllers;
 
+import Filters.AbstractFilter;
+import Filters.FilterFactory;
 import Services.Mail;
 import Services.StorageManager;
 import Services.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * controls requests pertaining to the profile of a single user (name,contacts,folders)
@@ -20,24 +25,41 @@ public class UserController {
     @GetMapping(value = "/folders/{folderName}")
     public ArrayList<Mail> listMails(@CookieValue(value = "email") String email,
                                      @PathVariable String folderName,
-                                     @RequestBody String body) {
+                                     @RequestParam(name = "sortType", defaultValue = "default") String sortType,
+                                     @RequestParam(name = "page", defaultValue = "1") Integer page,
+                                     @RequestParam(name = "filterType") String filterType,
+                                     @RequestParam(name = "filterValue") String filterValue) {
 
-        JSONObject json = new JSONObject(body);
-
-        // date ("default"), subject, sender, body, priority
-        String sortType = json.getString("sortType");
-
-        // 1 - based index
-        Integer pageNumber = json.getInt("page");
+        AbstractFilter filter = FilterFactory.getFilter(filterType);
 
         ArrayList<Mail> mails = StorageManager.getUserMails(email, folderName);
-
+        //return mails;
         //sorts in place
         StorageManager.sortMails(mails, sortType);
-
-        return StorageManager.getPage(mails, pageNumber);
+        if(filter != null){
+            mails = filter.meetCriteria(mails, filterValue);
+        }
+        return StorageManager.getPage(mails, page);
         //return "ok";
     }
+
+    @PutMapping("/updateContacts")
+    public void updateContacts(@CookieValue(value = "email") String email,
+                                  @RequestParam(value = "contacts") String contactsString) throws JsonProcessingException {
+        ObjectMapper objMapper = new ObjectMapper();
+        HashMap<String, String> map = objMapper.readValue(contactsString, HashMap.class);
+        User user = StorageManager.retrieveUser(email);
+        user.setContacts(map);
+        StorageManager.storeUser(user);
+        return ;
+    }
+
+    @GetMapping("/getContacts")
+    public HashMap<String,String> updateContacts(@CookieValue(value = "email") String email) throws JsonProcessingException {
+        User user = StorageManager.retrieveUser(email);
+        return user.getContacts();
+    }
+
 
     @PutMapping("/copy")
     public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {

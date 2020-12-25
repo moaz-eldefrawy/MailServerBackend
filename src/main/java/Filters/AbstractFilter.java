@@ -5,7 +5,7 @@ import Services.Mail;
 import java.util.ArrayList;
 
 
-abstract class AbstractFilter {
+public abstract class AbstractFilter {
 
     public ArrayList<Mail> meetCriteria (ArrayList<Mail> mails, Object val){
         ArrayList<Mail> filtered = new ArrayList<>();

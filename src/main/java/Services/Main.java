@@ -8,10 +8,7 @@ import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -45,23 +42,25 @@ public class Main {
 
 
         ArrayList<Mail> mails = new ArrayList<Mail>();
-        LocalDate k = ((new Date()).toInstant()
+        LocalDate k = (( new GregorianCalendar(2020, 10, 07).getTime()).toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate());
         System.out.println("date:");
-        System.out.println(k);
+        System.out.println(k.toString());
         System.out.println(k.getDayOfMonth());
-        System.out.println(k.getMonth());
+        System.out.println(k.getMonth() == ((new Date()).toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()).getMonth());
         System.out.println(k.getYear());
         System.out.print("\n");
-        Mail mail1 = new Mail("ahmed@gmVail.com", "subject3 subject2", new Date(),
+        Mail mail1 = new Mail("ahmed@gmVail.com", "subject3 subject2", new GregorianCalendar(2020, 9, 10).getTime(),
                 3);
         mail1.setBodyText("one two three");
-        Mail mail2=new Mail("basel@gmVail.com", "subject2", new Date(),
+        Mail mail2=new Mail("basel@gmVail.com", "subject2", new GregorianCalendar(2020, 12, 07).getTime(),
                 1 );
 
         mail2.setBodyText("one four two");
-        Mail mail3=new Mail("ziad@gmVail.com", "subject1", new Date(2018, 11, 25),
+        Mail mail3=new Mail("ziad@gmVail.com", "subject1", new GregorianCalendar(2020, 9, 10).getTime(),
                 2 );
 
 
@@ -78,7 +77,7 @@ public class Main {
         mails.add(mail1);
         mails.add(mail2);
         mails.add(mail3);
-        mails = s.meetCriteria(mails, new Date(System.currentTimeMillis()));
+        mails = s.meetCriteria(mails, "2020-10-10");
         Main.printMails(mails);
         //Sort.priority(mails);
         //Main.printMails(mails);

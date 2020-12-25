@@ -77,7 +77,6 @@ public class MainController {
     }
 
 
-
     @GetMapping(value = "/getMail")
     public Mail getMail(@CookieValue(value = "email") String email,
     @RequestParam(name = "emailId") String emailId, @RequestParam(name = "folderName") String folderName) {
@@ -151,13 +150,11 @@ public class MainController {
         }
     }
 
-
     @GetMapping(value  = "/test")
     public User testF(){
         User u = StorageManager.retrieveUser("eren@attack.titan");
         return u;
     }
-
 
     @GetMapping("/download")
     public ResponseEntity<Resource> download(@CookieValue(value = "email")String email, @RequestParam String mailID, @RequestParam String attachmentName) throws Exception{

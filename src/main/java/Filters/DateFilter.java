@@ -16,20 +16,14 @@ public class DateFilter extends AbstractFilter {
     @Override
     public boolean passesCriteria(Mail m, Object val) {
 
-        LocalDate date = (((Date) val).toInstant()
+        LocalDate date = (m.getDate().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate());
 
-        LocalDate mDate = ((m.getDate()).toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate());
+        System.out.println(date.toString());
+        System.out.println(val.toString());
 
-        System.out.println(date);
-        System.out.println(mDate);
-
-        return mDate.getDayOfMonth() == date.getDayOfMonth()
-                && mDate.getMonth() == date.getMonth()
-                && mDate.getYear() == date.getYear();
+        return date.toString().equals(val.toString());
     }
 
 }
