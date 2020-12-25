@@ -91,7 +91,9 @@ public class MainController {
     @RequestParam(value = "receivers")String[] receivers) {
         
         try{
+            System.out.println(isCompose);
             Mail newDraft = m.readValue(jsonMail, Mail.class);
+            newDraft.setSender(userEmail);
             Mail oldDraft = StorageManager.getUserMailById(userEmail, newDraft.getID(), "drafts");
             if(oldDraft != null){
                 newDraft.setID(oldDraft.getID());
@@ -116,7 +118,7 @@ public class MainController {
                     newDraft.addAttachment(mpfile.getOriginalFilename());
 
             StorageManager.storeMail(newDraft);
-            if(oldDraft == null)
+            if(oldDraft == null && isCompose == false)
                 StorageManager.addMailToFolder(newDraft.getID(), "drafts", newDraft.getSender());
 
             if(files != null)

@@ -27,22 +27,22 @@ public class UserController {
                                      @PathVariable String folderName,
                                      @RequestParam(name = "sortType", defaultValue = "default") String sortType,
                                      @RequestParam(name = "page", defaultValue = "1") Integer page,
-                                     @RequestParam(name = "filterType") String filterType,
-                                     @RequestParam(name = "filterValue") String filterValue) {
+                                     @RequestParam(name = "filterType", defaultValue = "") String filterType,
+                                     @RequestParam(name = "filterValue", defaultValue = "") String filterValue) {
 
 
+        System.out.println(sortType);
         ArrayList<Mail> mails = StorageManager.getUserMails(email, folderName);
         //return mails;
         //sorts in place
         StorageManager.sortMails(mails, sortType);
-
+        System.out.println(mails.size());
         //filter
         AbstractFilter filter = FilterFactory.getFilter(filterType);
         if(filter != null){
             mails = filter.meetCriteria(mails, filterValue);
         }
         return StorageManager.getPage(mails, page);
-        //return "ok";
     }
 
     @PutMapping("/updateContacts")
