@@ -46,17 +46,22 @@ public class UserController {
         return StorageManager.getPage(mails, page);
     }
 
-    @PutMapping("/updateContacts")
-    public static void updateContacts(@CookieValue(value = "email") String email,
-                                  @RequestBody ArrayList<Contact> contactsArrayList) throws JsonProcessingException {
+    @PutMapping("/updateContact")
+    public static Contact updateContact(@CookieValue(value = "email") String email,
+                                  @RequestBody Contact contact) throws JsonProcessingException {
+        
         User user = StorageManager.retrieveUser(email);
-        user.setContacts(contactsArrayList);
+        user.getContacts().put(contact.getId(), contact);
+        StorageManager.storeUser(user);
+        return user.getContacts().get(contact.getId());
+    }
 
-        Collections.sort(user.getContacts(), new Comparator<Contact>() {
-            public int compare(Contact c1, Contact c2) {
-                return c1.getName().compareTo(c2.getName());
-            }
-        });
+
+    @DeleteMapping("/deleteContact")
+    public static void deleteContact(@CookieValue(value = "email") String email,
+                                  @RequestBody String id) throws JsonProcessingException {
+        User user = StorageManager.retrieveUser(email);
+        user.getContacts().remove(id);
         StorageManager.storeUser(user);
         return ;
     }
@@ -67,7 +72,15 @@ public class UserController {
                                                  @RequestParam(name = "searchString", defaultValue = "") String searchString) throws JsonProcessingException {
         User user = StorageManager.retrieveUser(email);
         System.out.println(searchString);
-        return ContactFilter.filter(user.getContacts(), searchString);
+        ArrayList<Contact> contacts = new ArrayList<Contact>(user.getContacts().values());
+        
+        Collections.sort(contacts, new Comparator<Contact>() {
+            public int compare(Contact c1, Contact c2) {
+                return c1.getName().compareTo(c2.getName());
+            }
+        });
+
+        return ContactFilter.filter(contacts, searchString);
     }
 
 

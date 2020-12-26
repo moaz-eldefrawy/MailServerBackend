@@ -11,12 +11,12 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String email;
     private String password;
-    private ArrayList<Contact> contacts;
+    private HashMap<String, Contact> contacts;
     private HashMap<String, ArrayList<String> > folders;
     private ArrayList<Mail> mails;
 
     public User() {
-        this.contacts = new ArrayList<>();
+        this.contacts = new HashMap<String, Contact>();
         this.folders = new HashMap<String, ArrayList<String>>();
         this.mails = new ArrayList<Mail>();
         this.folders.put("inbox", new ArrayList<String>());
@@ -70,10 +70,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public ArrayList<Contact> getContacts() {
+    public HashMap<String, Contact> getContacts() {
         return contacts;
     }
-    public void setContacts(ArrayList<Contact> contacts) {
+
+    public void setContacts(HashMap<String, Contact> contacts) {
         this.contacts = contacts;
     }
 
