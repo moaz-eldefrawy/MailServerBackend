@@ -29,7 +29,6 @@ public class FileManager {
 
 	public static Object getFile(String filePath) {
 		Object obj = null;
-		System.out.println(filePath);
 		try {
 			FileInputStream fin = new FileInputStream(filePath);
 			ObjectInputStream Oin = new ObjectInputStream(fin);
@@ -101,7 +100,6 @@ public class FileManager {
 	public static void writeToJSONFile(Object obj, String filePath) {
 		try {
 			String json = mapper.writeValueAsString(obj);
-			System.out.println(json);
 			FileWriter file = new FileWriter(filePath + ".json");
 			file.write(json);
 			file.flush();

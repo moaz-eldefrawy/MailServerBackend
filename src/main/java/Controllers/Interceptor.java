@@ -17,7 +17,7 @@ public class Interceptor implements HandlerInterceptor {
 
         //System.out.println("Pre Handle method is Calling");
 
-        System.out.println("raw cookie = " + request.getHeader("Cookie"));
+        //System.out.println("raw cookie = " + request.getHeader("Cookie"));
 
         /*System.out.println(request.getCookies()[0]);
         for (Cookie cookie : request.getCookies()){

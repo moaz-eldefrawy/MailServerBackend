@@ -18,7 +18,7 @@ public class Mail implements Serializable, Cloneable {
 
     public static final long serialVersionUID = 3347324734166375499L;
     private String sender;
-    private ArrayList<String> recievers;
+    private ArrayList<String> receivers;
     private String subject;
     private Date date;
     private Integer priority;
@@ -29,7 +29,6 @@ public class Mail implements Serializable, Cloneable {
 
 
     
-    //TODO: JsonProperty for date
     public Mail(){
         ID = UUID.randomUUID().toString();
         date =  new Date(System.currentTimeMillis());
@@ -38,7 +37,7 @@ public class Mail implements Serializable, Cloneable {
         subject = "";
         priority = 0;
         attachments =new ArrayList<String>();
-        recievers = new ArrayList<String>();
+        receivers = new ArrayList<String>();
     }
 
     
@@ -169,14 +168,14 @@ public class Mail implements Serializable, Cloneable {
         this.bodyText = bodyText;
     }
 
-    public ArrayList<String> getRecievers() {
-        return recievers;
+    public ArrayList<String> getReceivers() {
+        return receivers;
     }
 
-    public void setRecievers(ArrayList<String> recievers) {
-        this.recievers = recievers;
+    public void setReceivers(ArrayList<String> receivers) {
+        this.receivers = receivers;
     }
-    
+
     public JSONObject toJSON(){
         JSONObject mailJSON = new JSONObject();
 
@@ -206,7 +205,7 @@ public class Mail implements Serializable, Cloneable {
         Mail copy = new Mail();
 
         copy.setSender(this.sender);
-        copy.setRecievers((ArrayList<String>) this.recievers.clone());
+        copy.setReceivers((ArrayList<String>) this.receivers.clone());
         copy.setSubject(this.subject);
         copy.setDate((Date) date.clone());
         copy.setPriority(Integer.valueOf(this.priority));

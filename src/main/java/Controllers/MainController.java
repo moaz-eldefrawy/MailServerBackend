@@ -59,11 +59,8 @@ public class MainController {
         JSONObject json = new JSONObject(body);
         String email = (String)json.get("email");
         String password = (String)json.get("password");
-        System.out.println("email: "+email);
-        System.out.println("password: "+password);
         User user = auth.signIn(email, password);
 
-        System.out.println(user.toString());
 
         if (user == null || !user.getPassword().equals(password)) {
             response.setStatus(401);
@@ -72,7 +69,6 @@ public class MainController {
             Cookie cookie = new Cookie("email", email);
             cookie.setMaxAge(999999999);
             response.addCookie(cookie);
-            System.out.println(cookie.toString());
             return "{\"user\": \""+email+"\"}";
         }
         
@@ -89,13 +85,12 @@ public class MainController {
     public ResponseEntity<String> compose(@CookieValue(value = "email") String userEmail, 
     @RequestParam(value = "files", required = false) MultipartFile[] files,
     @RequestParam(value = "mail") String jsonMail,
-    @RequestParam(value = "compose") Boolean isCompose,
-    @RequestParam(value = "receivers", required = false)String[] receivers) {
+    @RequestParam(value = "compose") Boolean isCompose) {
         
         try{
-            System.out.println(isCompose);
             Mail newDraft = m.readValue(jsonMail, Mail.class);
             newDraft.setSender(userEmail);
+            System.out.println(newDraft.getReceivers());
             Mail oldDraft = StorageManager.getUserMailById(userEmail, newDraft.getID(), "drafts");
             if(oldDraft != null){
                 newDraft.setID(oldDraft.getID());
@@ -126,19 +121,17 @@ public class MainController {
             if(files != null)
             {
                 for (MultipartFile mpfile : files){
-                    System.out.println(mpfile.getOriginalFilename());
                     File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
                     file.createNewFile();
                     mpfile.transferTo(file);
                 }
             
             }
-            System.out.println(isCompose);
             if(isCompose) {
                 StorageManager.addMailToFolder(newDraft.getID(), "sent", newDraft.getSender());
                 StorageManager.removeMailFromFolder(newDraft.getID(), "drafts", newDraft.getSender());
-                System.out.println(newDraft.getSender());
-                for (String rec : receivers) {
+                for (String rec : newDraft.getReceivers()) {
+                    System.out.println("receiver: " + rec);
                     if (auth.userExists(rec)) {
                         StorageManager.addMailToFolder(newDraft.getID(), "inbox", rec);
                         System.out.println(rec);
@@ -203,16 +196,6 @@ public class MainController {
     }
 
 
-    @PostMapping("/")
-    public void handleFileUpload(@RequestParam("attachments") MultipartFile[] attachments, @RequestParam String mailID) throws IOException {
-        String mailFolder = App.mailsFolderPath + File.separator + mailID;
-        for (MultipartFile mpfile : attachments){
-            System.out.println(mpfile.getOriginalFilename());
-            File file = new File(mailFolder + File.separator + mpfile.getOriginalFilename());
-            file.createNewFile();
-            mpfile.transferTo(file);
-        }
-    }
     */
 
 
