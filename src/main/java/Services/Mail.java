@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown =  true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Mail implements Serializable {
+public class Mail implements Serializable, Cloneable {
 
     public static final long serialVersionUID = 3347324734166375499L;
     private String sender;
