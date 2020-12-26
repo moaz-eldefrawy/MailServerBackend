@@ -85,11 +85,16 @@ public class UserController {
 
 
     @PutMapping("/copy")
-    public static boolean addMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
+    public static boolean copyMailToFolder(@RequestBody String body, @CookieValue(value = "email") String email) {
         JSONObject json = new JSONObject(body);
         String id = json.getString("id");
         String folder = json.getString("to");
-        return StorageManager.addMailToFolder(id, folder, email);
+
+        // Create a copy of the mail and store it
+        Mail copy = StorageManager.getMail(id.toString()).clone();
+        StorageManager.storeMail(copy);
+
+        return StorageManager.addMailToFolder(copy.getID(), folder, email);
     }
 
     @PutMapping("/move")
